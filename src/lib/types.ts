@@ -16,3 +16,11 @@ export type Account = {
   portfolioBalanceUsd: number;
   balances: Balances[];
 };
+
+export type Bank = {
+  address: string;
+  tokenSymbol: string;
+  totalAssetsUsd: number;
+  totalLiabilitiesUsd: number;
+  tvl: number;
+};
