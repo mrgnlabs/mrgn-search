@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
-import { PublicKey } from "@solana/web3.js";
-import BigNumber from "bignumber.js";
+
 import { getConfig, MarginfiClient } from "@mrgnlabs/marginfi-client-v2";
-import { Connection } from "@solana/web3.js";
 import { Wallet, loadBankMetadatas } from "@mrgnlabs/mrgn-common";
 
+import BigNumber from "bignumber.js";
+import { PublicKey, Connection } from "@solana/web3.js";
+
 import { Account } from "@/lib/types";
+import { STAKED_BANK_METADATA_URL } from "@/lib/consts";
 
 export async function GET(request: Request) {
   try {
@@ -31,12 +33,27 @@ export async function GET(request: Request) {
     }
 
     const bankMetadatas = await loadBankMetadatas();
+    const stakedBankMetadatas = await loadBankMetadatas(
+      STAKED_BANK_METADATA_URL,
+    );
+
+    const combinedBankMetadatas = {
+      ...bankMetadatas,
+      ...stakedBankMetadatas,
+    };
+
+    const preloadedBankAddresses = Object.keys(combinedBankMetadatas);
 
     const connection = new Connection(process.env.RPC_URL!);
     const client = await MarginfiClient.fetch(
       getConfig(),
       {} as Wallet,
       connection,
+      {
+        preloadedBankAddresses: preloadedBankAddresses.map(
+          (address) => new PublicKey(address),
+        ),
+      },
     );
 
     const marginfiAccounts =
@@ -58,12 +75,13 @@ export async function GET(request: Request) {
         const balances = account.balances
           .map((balance) => {
             const bank = client.getBankByPk(balance.bankPk);
-            const bankMetadata = bankMetadatas[balance.bankPk.toBase58()];
 
             if (!bank) {
               return undefined;
             }
 
+            const bankMetadata =
+              combinedBankMetadatas[balance.bankPk.toBase58()];
             const amounts = balance.computeQuantityUi(bank);
             const amountsUsd = balance.computeUsdValue(
               bank,

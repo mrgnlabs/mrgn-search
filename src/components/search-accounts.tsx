@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 
 import { PublicKey } from "@solana/web3.js";
-import { IconExternalLink } from "@tabler/icons-react";
+import { IconExternalLink, IconSearch } from "@tabler/icons-react";
 
 import { Account } from "@/lib/types";
 import {
@@ -16,7 +16,6 @@ import {
 } from "@/lib/utils";
 
 import { AssetCard } from "@/components/asset-card";
-import { SearchInput } from "@/components/search-input";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/ui/loader";
 import {
@@ -28,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "./ui/input";
 
 const SearchAccounts = () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -113,12 +113,19 @@ const SearchAccounts = () => {
         onSubmit={handleSubmit}
       >
         <div className="flex gap-2">
-          <SearchInput
-            ref={inputRef}
-            placeholder="Search by wallet address..."
-            required
-            disabled={isLoading}
-          />
+          <div className="relative w-full">
+            <Input
+              placeholder="Search by wallet address..."
+              ref={inputRef}
+              required
+              disabled={isLoading}
+              className="h-12 w-full pl-11 pr-4 md:text-lg"
+            />
+            <IconSearch
+              size={18}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+          </div>
           <Button type="submit" size="lg" disabled={isLoading}>
             Search
           </Button>

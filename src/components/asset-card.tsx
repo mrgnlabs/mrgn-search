@@ -27,7 +27,14 @@ const AssetCard = ({ balance, type }: AssetCardProps) => {
               height={32}
               className="rounded-full"
             />
-            {balance.bankMetadata.tokenSymbol}
+            <div className="flex flex-col">
+              <p className="text-sm font-medium">
+                {balance.bankMetadata.tokenName}
+              </p>
+              <p className="text-[13px] font-light text-muted-foreground">
+                {balance.bankMetadata.tokenSymbol}
+              </p>
+            </div>
           </div>
         </CardTitle>
       </CardHeader>
