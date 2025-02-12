@@ -1,8 +1,10 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 
 import { PublicKey } from "@solana/web3.js";
+import { IconExternalLink } from "@tabler/icons-react";
 
 import { Account } from "@/lib/types";
 import {
@@ -148,6 +150,16 @@ const SearchAccounts = () => {
                 </SelectGroup>
               </SelectContent>
             </Select>
+            <Link
+              href={`https://solscan.io/account/${currentAccount?.address}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <button className="flex items-center gap-1 border-b text-xs text-muted-foreground transition-colors hover:text-foreground">
+                <IconExternalLink size={13} />
+                View on Solscan
+              </button>
+            </Link>
           </div>
           {currentAccount && (
             <div className="w-full space-y-16">
