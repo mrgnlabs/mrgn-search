@@ -1,6 +1,6 @@
 import { BankMetadata } from "@mrgnlabs/mrgn-common";
 
-export type Balances = {
+export type Balance = {
   assets: number;
   liabilities: number;
   assetsUsd: number;
@@ -14,7 +14,7 @@ export type Account = {
   totalAssetsUsd: number;
   totalLiabilitiesUsd: number;
   portfolioBalanceUsd: number;
-  balances: Balances[];
+  balances: Balance[];
 };
 
 export type Bank = {

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 
-import { SearchInput } from "@/components/ui/search-input";
+import { SearchInput } from "@/components/search-input";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {

@@ -64,7 +64,7 @@ export async function GET(request: Request) {
               return undefined;
             }
 
-            const amounts = balance.computeQuantity(bank);
+            const amounts = balance.computeQuantityUi(bank);
             const amountsUsd = balance.computeUsdValue(
               bank,
               client.oraclePrices.get(balance.bankPk.toBase58())!,
