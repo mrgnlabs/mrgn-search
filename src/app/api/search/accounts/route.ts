@@ -50,6 +50,7 @@ export async function GET(request: Request) {
       {} as Wallet,
       connection,
       {
+        bankMetadataMap: combinedBankMetadatas,
         preloadedBankAddresses: preloadedBankAddresses.map(
           (address) => new PublicKey(address),
         ),
