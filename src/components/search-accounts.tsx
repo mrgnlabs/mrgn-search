@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 import { PublicKey } from "@solana/web3.js";
 import { IconExternalLink, IconSearch } from "@tabler/icons-react";
@@ -38,6 +39,9 @@ const SearchAccounts = () => {
     null,
   );
 
+  const searchParams = useSearchParams();
+  const walletAddress = searchParams.get("wallet");
+
   const healthFactorBgColor = (healthFactor: number) => {
     if (healthFactor < 0.25) {
       return "bg-red-400";
@@ -62,42 +66,38 @@ const SearchAccounts = () => {
     return "text-green-400";
   };
 
-  const handleSubmit = React.useCallback(
-    async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      const walletAddress = inputRef.current?.value;
+  const handleSubmit = React.useCallback(async () => {
+    const walletAddress = inputRef.current?.value;
 
-      if (!walletAddress) {
+    if (!walletAddress) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      setAccounts([]);
+      setCurrentAccount(null);
+
+      const publicKey = new PublicKey(walletAddress);
+      console.log(publicKey);
+
+      const accounts = await searchAccounts(publicKey);
+
+      if (!accounts || !accounts.length) {
+        setError("No accounts found");
         return;
       }
 
-      try {
-        setIsLoading(true);
-        setError(null);
-        setAccounts([]);
-        setCurrentAccount(null);
-
-        const publicKey = new PublicKey(walletAddress);
-        console.log(publicKey);
-
-        const accounts = await searchAccounts(publicKey);
-
-        if (!accounts || !accounts.length) {
-          setError("No accounts found");
-          return;
-        }
-
-        setAccounts(accounts);
-        setCurrentAccount(accounts[0]);
-      } catch (error) {
-        console.error(error);
-        setError("Invalid wallet address");
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [inputRef],
-  );
+      setAccounts(accounts);
+      setCurrentAccount(accounts[0]);
+    } catch (error) {
+      console.error(error);
+      setError("Invalid wallet address");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [inputRef]);
 
   const handleAccountChange = (value: string) => {
     const selectedAccount = accounts.find(
@@ -106,11 +106,20 @@ const SearchAccounts = () => {
     setCurrentAccount(selectedAccount || null);
   };
 
+  React.useEffect(() => {
+    if (walletAddress) {
+      handleSubmit();
+    }
+  }, [walletAddress, handleSubmit]);
+
   return (
     <div className="w-full space-y-12">
       <form
         className="mx-auto w-full max-w-2xl space-y-2"
-        onSubmit={handleSubmit}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
       >
         <div className="flex gap-2">
           <div className="relative w-full">
@@ -119,6 +128,7 @@ const SearchAccounts = () => {
               ref={inputRef}
               required
               disabled={isLoading}
+              defaultValue={walletAddress || ""}
               className="h-12 w-full pl-11 pr-4 md:text-lg"
             />
             <IconSearch
