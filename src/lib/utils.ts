@@ -20,6 +20,21 @@ export const shortAddress = (address: string) => {
   return address.slice(0, 4) + "..." + address.slice(-4);
 };
 
+export const healthFactorColor = (
+  healthFactor: number,
+  type: "bg" | "text" = "text",
+) => {
+  if (healthFactor < 0.25) {
+    return type === "bg" ? "bg-red-400" : "text-red-400";
+  }
+
+  if (healthFactor < 0.5) {
+    return type === "bg" ? "bg-yellow-400" : "text-yellow-400";
+  }
+
+  return type === "bg" ? "bg-green-400" : "text-green-400";
+};
+
 export const getTokenIconUrl = (address: string) => {
   return `https://storage.googleapis.com/mrgn-public/mrgn-token-icons/${address}.png`;
 };

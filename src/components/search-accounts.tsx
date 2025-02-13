@@ -8,15 +8,9 @@ import { PublicKey } from "@solana/web3.js";
 import { IconExternalLink, IconSearch } from "@tabler/icons-react";
 
 import { Account } from "@/lib/types";
-import {
-  formatPercentage,
-  searchAccounts,
-  shortAddress,
-  formatUsd,
-  cn,
-} from "@/lib/utils";
+import { searchAccounts, shortAddress } from "@/lib/utils";
 
-import { AssetCard } from "@/components/asset-card";
+import { CurrentAccount } from "@/components/current-account";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/ui/loader";
 import {
@@ -42,30 +36,6 @@ const SearchAccounts = () => {
   const searchParams = useSearchParams();
   const walletAddress = searchParams.get("wallet");
 
-  const healthFactorBgColor = (healthFactor: number) => {
-    if (healthFactor < 0.25) {
-      return "bg-red-400";
-    }
-
-    if (healthFactor < 0.5) {
-      return "bg-orange-400";
-    }
-
-    return "bg-green-400";
-  };
-
-  const healthFactorTextColor = (healthFactor: number) => {
-    if (healthFactor < 0.25) {
-      return "text-red-400";
-    }
-
-    if (healthFactor < 0.5) {
-      return "text-orange-400";
-    }
-
-    return "text-green-400";
-  };
-
   const handleSubmit = React.useCallback(async () => {
     const walletAddress = inputRef.current?.value;
 
@@ -80,7 +50,6 @@ const SearchAccounts = () => {
       setCurrentAccount(null);
 
       const publicKey = new PublicKey(walletAddress);
-      console.log(publicKey);
 
       const accounts = await searchAccounts(publicKey);
 
@@ -91,6 +60,11 @@ const SearchAccounts = () => {
 
       setAccounts(accounts);
       setCurrentAccount(accounts[0]);
+
+      // Update the URL search parameter without triggering a navigation
+      const url = new URL(window.location.href);
+      url.searchParams.set("wallet", walletAddress);
+      window.history.pushState({}, "", url.toString());
     } catch (error) {
       console.error(error);
       setError("Invalid wallet address");
@@ -178,64 +152,7 @@ const SearchAccounts = () => {
               </button>
             </Link>
           </div>
-          {currentAccount && (
-            <div className="w-full space-y-16">
-              <div className="space-y-6">
-                <div className="flex w-full flex-col gap-1">
-                  <div className="flex w-full items-center justify-between gap-2">
-                    <h3 className="font-medium">Health Factor</h3>
-                    <p
-                      className={cn(
-                        healthFactorTextColor(currentAccount.healthFactor),
-                        "font-medium",
-                      )}
-                    >
-                      {formatPercentage(currentAccount.healthFactor)}
-                    </p>
-                  </div>
-                  <div className="flex h-2 w-full items-center rounded-sm bg-muted px-0.5">
-                    <div
-                      className={cn(
-                        "h-1 w-1/2 rounded-sm",
-                        healthFactorBgColor(currentAccount.healthFactor),
-                      )}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium">Total Assets: </h3>
-                    <p>{formatUsd(currentAccount.totalAssetsUsd)}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium">Total Liabilities: </h3>
-                    <p>{formatUsd(currentAccount.totalLiabilitiesUsd)}</p>
-                  </div>
-
-                  <div className="space-y-4">
-                    {currentAccount.balances
-                      .filter((balance) => balance.assetsUsd > 0)
-                      .map((balance, index) => (
-                        <AssetCard type="asset" balance={balance} key={index} />
-                      ))}
-                  </div>
-
-                  <div className="space-y-4">
-                    {currentAccount.balances
-                      .filter((balance) => balance.liabilitiesUsd > 0)
-                      .map((balance, index) => (
-                        <AssetCard
-                          type="liability"
-                          balance={balance}
-                          key={index}
-                        />
-                      ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          {currentAccount && <CurrentAccount currentAccount={currentAccount} />}
         </div>
       )}
     </div>

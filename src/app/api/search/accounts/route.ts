@@ -97,11 +97,11 @@ export async function GET(request: Request) {
               bankMetadata: bankMetadata,
             };
           })
-          .filter((balance) => balance !== undefined);
-
-        if (!balances.length) {
-          return undefined;
-        }
+          .filter((balance) => balance !== undefined)
+          .sort(
+            (a, b) =>
+              b.assetsUsd - a.assetsUsd || b.liabilitiesUsd - a.liabilitiesUsd,
+          );
 
         const totalAssetsUsd = balances
           .reduce(
@@ -128,7 +128,8 @@ export async function GET(request: Request) {
           balances,
         };
       })
-      .filter((account) => account !== undefined);
+      .filter((account) => account !== undefined)
+      .sort((a, b) => b.portfolioBalanceUsd - a.portfolioBalanceUsd);
 
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
