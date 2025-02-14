@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { PublicKey } from "@solana/web3.js";
 
-import { Account, Bank } from "@/lib/types";
+import { Account, Bank, BankSearchResult } from "@/lib/types";
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
@@ -41,16 +41,27 @@ export const getTokenIconUrl = (address: string) => {
 
 export const searchAccounts = async (query: PublicKey): Promise<Account[]> => {
   const response = await fetch(
-    `/api/search/accounts?wallet=${query.toBase58()}`,
+    process.env.NEXT_PUBLIC_BASE_URL +
+      `/api/search/accounts?wallet=${query.toBase58()}`,
   );
   const data = await response.json();
 
   return data;
 };
 
-export const searchBanks = async (query: PublicKey): Promise<Bank[]> => {
-  const response = await fetch(`/api/search/banks?address=${query.toBase58()}`);
+export const searchBanks = async (): Promise<BankSearchResult[]> => {
+  const response = await fetch(
+    process.env.NEXT_PUBLIC_BASE_URL + "/api/search/banks",
+  );
   const data = await response.json();
+  return data;
+};
 
+export const getBank = async (address: PublicKey): Promise<Bank | null> => {
+  const response = await fetch(
+    process.env.NEXT_PUBLIC_BASE_URL +
+      `/api/search/banks?address=${address.toBase58()}`,
+  );
+  const data = await response.json();
   return data;
 };

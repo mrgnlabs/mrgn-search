@@ -16,14 +16,20 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const bankAddress = searchParams.get("address");
 
+    const bankMetadatas = await loadBankMetadatas();
+
+    // If no address provided, return all bank metadata
     if (!bankAddress) {
-      return NextResponse.json(
-        { error: "Bank address is required" },
-        { status: 400 },
+      const allBanks = Object.entries(bankMetadatas).map(
+        ([address, metadata]) => ({
+          address,
+          tokenSymbol: metadata.tokenSymbol,
+          tokenAddress: metadata.tokenAddress,
+        }),
       );
+      return NextResponse.json(allBanks, { status: 200 });
     }
 
-    const bankMetadatas = await loadBankMetadatas();
     const bankMetadata = bankMetadatas[bankAddress];
 
     if (!bankMetadata) {

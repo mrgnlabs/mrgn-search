@@ -24,3 +24,9 @@ export type Bank = {
   totalLiabilitiesUsd: number;
   tvl: number;
 };
+
+export type BankSearchResult = {
+  address: string;
+  tokenSymbol: string;
+  tokenAddress: string;
+};
