@@ -1,4 +1,3 @@
-import { BankConfig } from "@mrgnlabs/marginfi-client-v2";
 import { BankMetadata } from "@mrgnlabs/mrgn-common";
 
 export type Balance = {
@@ -24,7 +23,18 @@ export type Bank = {
   totalAssetsUsd: number;
   totalLiabilitiesUsd: number;
   tvl: number;
-  config: BankConfig;
+  config: {
+    assetTag: "staked" | "default";
+    assetWeightInit: number;
+    assetWeightMaint: number;
+    borrowLimit: number;
+    depositLimit: number;
+    operationalState: string;
+    riskTier: string;
+    oracleKey: string;
+    oracleMaxAge: number;
+    oracleSetup: string;
+  };
 };
 
 export type BankSearchResult = {

@@ -9,6 +9,10 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 export const formatPercentage = (value: number) =>
   `${(value * 100).toFixed(2)}%`;
 
+export const formatNumber = (value: number) => {
+  return new Intl.NumberFormat("en-US").format(value);
+};
+
 export const formatUsd = (value: number) => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",

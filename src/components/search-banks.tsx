@@ -7,7 +7,13 @@ import Link from "next/link";
 import { IconExternalLink, IconX } from "@tabler/icons-react";
 import { PublicKey } from "@solana/web3.js";
 
-import { getTokenIconUrl, getBank, shortAddress, formatUsd } from "@/lib/utils";
+import {
+  getTokenIconUrl,
+  getBank,
+  shortAddress,
+  formatUsd,
+  formatNumber,
+} from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { BankSearchResult, Bank } from "@/lib/types";
 
@@ -77,6 +83,7 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
             className="h-12 md:text-lg"
             value={query}
             onValueChange={(value) => setQuery(value)}
+            autoFocus
           />
           {query && selectedBank && (
             <button
@@ -155,7 +162,7 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
                 </Button>
               </Link>
             </li>
-            {bankDetails?.config.oracleKeys[0] && (
+            {bankDetails?.config.oracleKey && (
               <li className="grid w-full grid-cols-2 items-center">
                 <strong className="font-medium text-muted-foreground">
                   Oracle Address
@@ -167,7 +174,7 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
                     ) : (
                       <IconPyth />
                     )}
-                    {shortAddress(bankDetails?.config.oracleKeys[0])}
+                    {shortAddress(bankDetails?.config.oracleKey)}
                   </Button>
                 </div>
               </li>
@@ -177,41 +184,71 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
             <Loader text="Fetching bank details..." className="pb-8" />
           )}
           {bankDetails && (
-            <div className="grid grid-cols-3 gap-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Total Deposits</CardTitle>
-                  <CardDescription className="sr-only">
-                    The total amount of deposits in the bank.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="text-lg">
-                  {formatUsd(bankDetails.totalAssetsUsd)}
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Total Borrows</CardTitle>
-                  <CardDescription className="sr-only">
-                    The total amount of borrows in the bank.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="text-lg">
-                  {formatUsd(bankDetails.totalLiabilitiesUsd)}
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>TVL</CardTitle>
-                  <CardDescription className="sr-only">
-                    The total value locked in the bank, calculated as deposits
-                    minus borrows.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="text-lg">
-                  {formatUsd(bankDetails.tvl)}
-                </CardContent>
-              </Card>
+            <div className="space-y-8">
+              <div className="grid grid-cols-3 gap-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Total Deposits</CardTitle>
+                    <CardDescription className="sr-only">
+                      The total amount of deposits in the bank.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-lg">
+                    {formatUsd(bankDetails.totalAssetsUsd)}
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Total Borrows</CardTitle>
+                    <CardDescription className="sr-only">
+                      The total amount of borrows in the bank.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-lg">
+                    {formatUsd(bankDetails.totalLiabilitiesUsd)}
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>TVL</CardTitle>
+                    <CardDescription className="sr-only">
+                      The total value locked in the bank, calculated as deposits
+                      minus borrows.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-lg">
+                    {formatUsd(bankDetails.tvl)}
+                  </CardContent>
+                </Card>
+              </div>
+              <dl className="grid w-full grid-cols-2 gap-2 text-sm">
+                <dt>Deposit Limit</dt>
+                <dd className="text-right">
+                  {formatNumber(bankDetails.config.depositLimit)}{" "}
+                  {selectedBank.tokenSymbol}
+                </dd>
+                <dt>Borrow Limit</dt>
+                <dd className="text-right">
+                  {formatNumber(bankDetails.config.borrowLimit)}{" "}
+                  {selectedBank.tokenSymbol}
+                </dd>
+                <dt>Asset Weight Init</dt>
+                <dd className="text-right">
+                  {bankDetails.config.assetWeightInit}
+                </dd>
+                <dt>Asset Weight Maint</dt>
+                <dd className="text-right">
+                  {bankDetails.config.assetWeightMaint}
+                </dd>
+                <dt>Operational State</dt>
+                <dd className="text-right">
+                  {bankDetails.config.operationalState}
+                </dd>
+                <dt>Oracle Max Age</dt>
+                <dd className="text-right">
+                  {bankDetails.config.oracleMaxAge}
+                </dd>
+              </dl>
             </div>
           )}
         </div>

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { PublicKey } from "@solana/web3.js";
 import {
+  AssetTag,
   getConfig,
   MarginfiClient,
   MarginRequirementType,
@@ -80,7 +81,19 @@ export async function GET(request: Request) {
       totalAssetsUsd,
       totalLiabilitiesUsd,
       tvl,
-      config: bank.config,
+      config: {
+        assetTag:
+          bank.config.assetTag === AssetTag.STAKED ? "staked" : "default",
+        assetWeightInit: bank.config.assetWeightInit.toNumber(),
+        assetWeightMaint: bank.config.assetWeightMaint.toNumber(),
+        borrowLimit: bank.config.borrowLimit.toNumber(),
+        depositLimit: bank.config.depositLimit.toNumber(),
+        operationalState: bank.config.operationalState,
+        riskTier: bank.config.riskTier,
+        oracleKey: bank.config.oracleKeys[0].toBase58(),
+        oracleMaxAge: bank.config.oracleMaxAge,
+        oracleSetup: bank.config.oracleSetup,
+      },
     };
 
     return NextResponse.json(bankData, { status: 200 });
