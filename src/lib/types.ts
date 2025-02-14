@@ -1,3 +1,4 @@
+import { BankConfig } from "@mrgnlabs/marginfi-client-v2";
 import { BankMetadata } from "@mrgnlabs/mrgn-common";
 
 export type Balance = {
@@ -23,6 +24,7 @@ export type Bank = {
   totalAssetsUsd: number;
   totalLiabilitiesUsd: number;
   tvl: number;
+  config: BankConfig;
 };
 
 export type BankSearchResult = {

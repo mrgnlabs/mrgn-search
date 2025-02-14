@@ -80,6 +80,7 @@ export async function GET(request: Request) {
       totalAssetsUsd,
       totalLiabilitiesUsd,
       tvl,
+      config: bank.config,
     };
 
     return NextResponse.json(bankData, { status: 200 });

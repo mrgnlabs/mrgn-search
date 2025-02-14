@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/ui/loader";
+import { IconPyth, IconSwitchboard } from "@/components/ui/icons";
 
 type SearchBanksProps = {
   banks: BankSearchResult[];
@@ -77,7 +78,7 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
             value={query}
             onValueChange={(value) => setQuery(value)}
           />
-          {query && (
+          {query && selectedBank && (
             <button
               onClick={() => setQuery("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
@@ -86,7 +87,9 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
             </button>
           )}
         </div>
-        <CommandList className={cn("max-h-[316px]", !query && "hidden")}>
+        <CommandList
+          className={cn("max-h-[316px]", !query && selectedBank && "hidden")}
+        >
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Banks">
             {banks.map((bank) => (
@@ -152,6 +155,23 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
                 </Button>
               </Link>
             </li>
+            {bankDetails?.config.oracleKeys[0] && (
+              <li className="grid w-full grid-cols-2 items-center">
+                <strong className="font-medium text-muted-foreground">
+                  Oracle Address
+                </strong>
+                <div className="flex items-center justify-end gap-1">
+                  <Button variant="ghost" size="sm">
+                    {bankDetails.config.oracleSetup === "SwitchboardPull" ? (
+                      <IconSwitchboard />
+                    ) : (
+                      <IconPyth />
+                    )}
+                    {shortAddress(bankDetails?.config.oracleKeys[0])}
+                  </Button>
+                </div>
+              </li>
+            )}
           </ul>
           {isLoading && (
             <Loader text="Fetching bank details..." className="pb-8" />

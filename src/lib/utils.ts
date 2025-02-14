@@ -16,8 +16,10 @@ export const formatUsd = (value: number) => {
   }).format(value);
 };
 
-export const shortAddress = (address: string) => {
-  return address.slice(0, 4) + "..." + address.slice(-4);
+export const shortAddress = (address: string | PublicKey) => {
+  const addressString =
+    address instanceof PublicKey ? address.toBase58() : address;
+  return addressString.slice(0, 4) + "..." + addressString.slice(-4);
 };
 
 export const healthFactorColor = (
