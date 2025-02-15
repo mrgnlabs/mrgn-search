@@ -20,6 +20,15 @@ export const formatUsd = (value: number) => {
   }).format(value);
 };
 
+export const formatUsdShort = (value: number) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    notation: "compact",
+    minimumFractionDigits: 2,
+  }).format(value);
+};
+
 export const shortAddress = (address: string | PublicKey) => {
   const addressString =
     address instanceof PublicKey ? address.toBase58() : address;

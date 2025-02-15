@@ -6,11 +6,13 @@ import {
   MarginfiClient,
   MarginRequirementType,
   PriceBias,
+  RiskTier,
 } from "@mrgnlabs/marginfi-client-v2";
 import { Connection } from "@solana/web3.js";
 import { loadBankMetadatas, Wallet } from "@mrgnlabs/mrgn-common";
 
 import { Bank } from "@/lib/types";
+import { STAKED_BANK_METADATA_URL } from "@/lib/consts";
 
 export async function GET(request: Request) {
   try {
@@ -18,10 +20,18 @@ export async function GET(request: Request) {
     const bankAddress = searchParams.get("address");
 
     const bankMetadatas = await loadBankMetadatas();
+    const stakedBankMetadatas = await loadBankMetadatas(
+      STAKED_BANK_METADATA_URL,
+    );
+
+    const combinedBankMetadatas = {
+      ...bankMetadatas,
+      ...stakedBankMetadatas,
+    };
 
     // If no address provided, return all bank metadata
     if (!bankAddress) {
-      const allBanks = Object.entries(bankMetadatas).map(
+      const allBanks = Object.entries(combinedBankMetadatas).map(
         ([address, metadata]) => ({
           address,
           tokenSymbol: metadata.tokenSymbol,
@@ -31,7 +41,7 @@ export async function GET(request: Request) {
       return NextResponse.json(allBanks, { status: 200 });
     }
 
-    const bankMetadata = bankMetadatas[bankAddress];
+    const bankMetadata = combinedBankMetadatas[bankAddress];
 
     if (!bankMetadata) {
       return NextResponse.json(
@@ -83,7 +93,11 @@ export async function GET(request: Request) {
       tvl,
       config: {
         assetTag:
-          bank.config.assetTag === AssetTag.STAKED ? "staked" : "default",
+          bank.config.riskTier === RiskTier.Isolated
+            ? "Isolated"
+            : bank.config.assetTag === AssetTag.STAKED
+              ? "Native Stake"
+              : "Global",
         assetWeightInit: bank.config.assetWeightInit.toNumber(),
         assetWeightMaint: bank.config.assetWeightMaint.toNumber(),
         borrowLimit: bank.config.borrowLimit.toNumber(),

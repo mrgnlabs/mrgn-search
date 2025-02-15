@@ -12,7 +12,7 @@ import {
   getBank,
   shortAddress,
   formatUsd,
-  formatNumber,
+  formatUsdShort,
 } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { BankSearchResult, Bank } from "@/lib/types";
@@ -35,6 +35,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/ui/loader";
 import { IconPyth, IconSwitchboard } from "@/components/ui/icons";
+import { Badge } from "@/components/ui/badge";
 
 type SearchBanksProps = {
   banks: BankSearchResult[];
@@ -122,15 +123,22 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
       </Command>
       {selectedBank && (
         <div className="w-full space-y-6 rounded-lg bg-muted/50 p-4">
-          <div className="flex items-center gap-3 text-2xl font-medium">
-            <Image
-              src={getTokenIconUrl(selectedBank.tokenAddress)}
-              alt={selectedBank.tokenSymbol}
-              width={36}
-              height={36}
-              className="rounded-full"
-            />
-            {selectedBank.tokenSymbol}
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 text-2xl font-medium">
+              <Image
+                src={getTokenIconUrl(selectedBank.tokenAddress)}
+                alt={selectedBank.tokenSymbol}
+                width={36}
+                height={36}
+                className="rounded-full"
+              />
+              {selectedBank.tokenSymbol}
+            </div>
+            {bankDetails && (
+              <Badge variant="outline">
+                {bankDetails.config.assetTag} Pool
+              </Badge>
+            )}
           </div>
 
           <ul className="w-full list-none">
@@ -224,12 +232,12 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
               <dl className="grid w-full grid-cols-2 gap-2 text-sm">
                 <dt>Deposit Limit</dt>
                 <dd className="text-right">
-                  {formatNumber(bankDetails.config.depositLimit)}{" "}
+                  {formatUsdShort(bankDetails.config.depositLimit)}{" "}
                   {selectedBank.tokenSymbol}
                 </dd>
                 <dt>Borrow Limit</dt>
                 <dd className="text-right">
-                  {formatNumber(bankDetails.config.borrowLimit)}{" "}
+                  {formatUsdShort(bankDetails.config.borrowLimit)}{" "}
                   {selectedBank.tokenSymbol}
                 </dd>
                 <dt>Asset Weight Init</dt>
@@ -240,13 +248,13 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
                 <dd className="text-right">
                   {bankDetails.config.assetWeightMaint}
                 </dd>
+                <dt>Oracle Max Age</dt>
+                <dd className="text-right">
+                  {bankDetails.config.oracleMaxAge}s
+                </dd>
                 <dt>Operational State</dt>
                 <dd className="text-right">
                   {bankDetails.config.operationalState}
-                </dd>
-                <dt>Oracle Max Age</dt>
-                <dd className="text-right">
-                  {bankDetails.config.oracleMaxAge}
                 </dd>
               </dl>
             </div>

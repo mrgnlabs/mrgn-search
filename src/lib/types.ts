@@ -24,7 +24,7 @@ export type Bank = {
   totalLiabilitiesUsd: number;
   tvl: number;
   config: {
-    assetTag: "staked" | "default";
+    assetTag: "Isolated" | "Native Stake" | "Global";
     assetWeightInit: number;
     assetWeightMaint: number;
     borrowLimit: number;
