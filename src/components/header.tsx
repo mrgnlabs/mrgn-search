@@ -42,6 +42,14 @@ const Header = () => {
             Banks
           </Button>
         </Link>
+        <Link href="/addresses">
+          <Button
+            variant="ghost"
+            className={pathname === "/addresses" ? "bg-muted" : ""}
+          >
+            Addresses
+          </Button>
+        </Link>
         <Link
           href="https://github.com/mrgnlabs/marginfi-search"
           className="ml-auto flex"
