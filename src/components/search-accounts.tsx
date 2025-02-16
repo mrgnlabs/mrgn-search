@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "./ui/input";
 
-const SearchAccounts = () => {
+const Search = () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -156,6 +156,14 @@ const SearchAccounts = () => {
         </div>
       )}
     </div>
+  );
+};
+
+const SearchAccounts = () => {
+  return (
+    <React.Suspense>
+      <Search />
+    </React.Suspense>
   );
 };
 
