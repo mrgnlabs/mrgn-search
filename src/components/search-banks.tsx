@@ -193,7 +193,7 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
           )}
           {bankDetails && (
             <div className="space-y-8">
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid gap-4 md:grid-cols-3">
                 <Card>
                   <CardHeader>
                     <CardTitle>Total Deposits</CardTitle>

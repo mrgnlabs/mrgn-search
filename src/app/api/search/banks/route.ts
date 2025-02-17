@@ -93,7 +93,7 @@ export async function GET(request: Request) {
         assetTag:
           bank.config.riskTier === RiskTier.Isolated
             ? "Isolated"
-            : bank.config.assetTag === AssetTag.STAKED
+            : bank.config?.assetTag && bank.config.assetTag === AssetTag.STAKED
               ? "Native Stake"
               : "Global",
         assetWeightInit: bank.config.assetWeightInit.toNumber(),

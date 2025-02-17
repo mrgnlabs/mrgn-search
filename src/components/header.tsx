@@ -25,7 +25,7 @@ const Header = () => {
           </svg>
         </Link>
       </h1>
-      <nav className="flex w-full items-center gap-2">
+      <nav className="hidden w-full items-center gap-2 md:flex">
         <Link href="/">
           <Button
             variant="ghost"
