@@ -39,7 +39,7 @@ const links = [
     icon: <IconAddressBook />,
   },
   {
-    href: "https://github.com/mrgnlabs/marginfi-search",
+    href: "https://github.com/mrgnlabs/mrgn-search",
     label: "Github",
     icon: <IconBrandGithub />,
   },
