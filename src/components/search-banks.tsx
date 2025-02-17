@@ -73,7 +73,7 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
     return () => document.removeEventListener("keydown", handleEscape);
   }, []);
 
-  console.log(bankDetails);
+  if (!banks.length) return null;
 
   return (
     <div className="w-full space-y-16 pb-16">
@@ -98,7 +98,7 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
         <CommandList
           className={cn("max-h-[316px]", !query && selectedBank && "hidden")}
         >
-          <CommandEmpty>No results found.</CommandEmpty>
+          {query.length > 0 && <CommandEmpty>No results found.</CommandEmpty>}
           <CommandGroup heading="Banks">
             {banks.map((bank) => (
               <CommandItem

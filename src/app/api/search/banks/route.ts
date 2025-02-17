@@ -31,14 +31,12 @@ export async function GET(request: Request) {
 
     // If no address provided, return all bank metadata
     if (!bankAddress) {
-      const allBanks = Object.entries(combinedBankMetadatas).map(
-        ([address, metadata]) => ({
-          address,
-          tokenSymbol: metadata.tokenSymbol,
-          tokenAddress: metadata.tokenAddress,
-        }),
+      return NextResponse.json(
+        {
+          error: "No address provided",
+        },
+        { status: 400 },
       );
-      return NextResponse.json(allBanks, { status: 200 });
     }
 
     const bankMetadata = combinedBankMetadatas[bankAddress];
