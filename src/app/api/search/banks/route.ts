@@ -7,6 +7,11 @@ import {
   MarginRequirementType,
   PriceBias,
   RiskTier,
+  findPythPushOracleAddress,
+  OracleSetup,
+  PYTH_PUSH_ORACLE_ID,
+  PYTH_SPONSORED_SHARD_ID,
+  MARGINFI_SPONSORED_SHARD_ID,
 } from "@mrgnlabs/marginfi-client-v2";
 import { Connection } from "@solana/web3.js";
 import { loadBankMetadatas, Wallet } from "@mrgnlabs/mrgn-common";
@@ -62,6 +67,37 @@ export async function GET(request: Request) {
     }
 
     const oraclePrice = client.oraclePrices.get(bank.address.toBase58())!;
+    let oracleKeys = bank.config.oracleKeys.filter(
+      (key) => !key.equals(PublicKey.default),
+    );
+
+    if (bank.config.oracleSetup === OracleSetup.PythPushOracle) {
+      const newOracleKeys: PublicKey[] = [];
+
+      for (const key of oracleKeys) {
+        const pythSponsoredOracle = findPythPushOracleAddress(
+          key.toBuffer(),
+          PYTH_PUSH_ORACLE_ID,
+          PYTH_SPONSORED_SHARD_ID,
+        );
+
+        const marginfiSponsoredOracle = findPythPushOracleAddress(
+          key.toBuffer(),
+          PYTH_PUSH_ORACLE_ID,
+          MARGINFI_SPONSORED_SHARD_ID,
+        );
+
+        if (pythSponsoredOracle) {
+          newOracleKeys.push(pythSponsoredOracle);
+        }
+
+        if (marginfiSponsoredOracle) {
+          newOracleKeys.push(marginfiSponsoredOracle);
+        }
+      }
+
+      oracleKeys = newOracleKeys;
+    }
 
     const totalAssetsUsd = bank
       .computeAssetUsdValue(
@@ -102,7 +138,7 @@ export async function GET(request: Request) {
         depositLimit: bank.config.depositLimit.toNumber(),
         operationalState: bank.config.operationalState,
         riskTier: bank.config.riskTier,
-        oracleKey: bank.config.oracleKeys[0].toBase58(),
+        oracleKeys: oracleKeys.map((key) => key.toBase58()),
         oracleMaxAge: bank.config.oracleMaxAge,
         oracleSetup: bank.config.oracleSetup,
       },
