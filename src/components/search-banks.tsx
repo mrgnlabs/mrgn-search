@@ -15,6 +15,7 @@ import {
   formatUsdShort,
 } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { MARGINFI_MAIN_GROUP_ID } from "@/lib/consts";
 import { BankSearchResult, Bank } from "@/lib/types";
 
 import {
@@ -148,7 +149,21 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
           <ul className="w-full list-none">
             <li className="grid w-full grid-cols-2 items-center">
               <strong className="font-medium text-muted-foreground">
-                Address:
+                Group Address:
+              </strong>
+              <Link
+                href={`https://solscan.io/address/`}
+                className="flex items-center justify-end gap-1"
+              >
+                <Button variant="ghost" size="sm">
+                  <IconExternalLink size={12} />
+                  {shortAddress(MARGINFI_MAIN_GROUP_ID)}
+                </Button>
+              </Link>
+            </li>
+            <li className="grid w-full grid-cols-2 items-center">
+              <strong className="font-medium text-muted-foreground">
+                Bank Address:
               </strong>
               <Link
                 href={`https://solscan.io/address/${selectedBank.address}`}
@@ -160,6 +175,7 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
                 </Button>
               </Link>
             </li>
+
             <li className="grid w-full grid-cols-2 items-center">
               <strong className="font-medium text-muted-foreground">
                 Mint Address:
