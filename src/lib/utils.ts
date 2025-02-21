@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { PublicKey } from "@solana/web3.js";
 
-import { Account, Bank, BankSearchResult } from "@/lib/types";
+import { Account, Bank, BankSearchResult, PointsData } from "@/lib/types";
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
@@ -76,6 +76,14 @@ export const getBank = async (address: PublicKey): Promise<Bank | null> => {
   const response = await fetch(
     process.env.NEXT_PUBLIC_BASE_URL +
       `/api/search/banks?address=${address.toBase58()}`,
+  );
+  const data = await response.json();
+  return data;
+};
+
+export const getPoints = async (wallet: string): Promise<PointsData> => {
+  const response = await fetch(
+    process.env.NEXT_PUBLIC_BASE_URL + `/api/search/points?wallet=${wallet}`,
   );
   const data = await response.json();
   return data;

@@ -1,34 +1,26 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import { PublicKey } from "@solana/web3.js";
-import { IconExternalLink, IconSearch } from "@tabler/icons-react";
+import { IconSearch } from "@tabler/icons-react";
 
-import { Account } from "@/lib/types";
-import { searchAccounts, shortAddress } from "@/lib/utils";
+import { Account, PointsData } from "@/lib/types";
+import { searchAccounts, getPoints } from "@/lib/utils";
 
 import { CurrentAccount } from "@/components/current-account";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/ui/loader";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "./ui/input";
+import { Input } from "@/components/ui/input";
+import { CurrentAuthority } from "./current-authority";
 
 const Search = () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [accounts, setAccounts] = React.useState<Account[]>([]);
+  const [points, setPoints] = React.useState<PointsData | null>(null);
   const [currentAccount, setCurrentAccount] = React.useState<Account | null>(
     null,
   );
@@ -51,15 +43,17 @@ const Search = () => {
 
       const publicKey = new PublicKey(walletAddress);
 
-      const accounts = await searchAccounts(publicKey);
+      const accountsData = await searchAccounts(publicKey);
+      const pointsData = await getPoints(walletAddress);
 
-      if (!accounts || !accounts.length) {
+      if (!accountsData || !accountsData.length) {
         setError("No accounts found");
         return;
       }
 
-      setAccounts(accounts);
-      setCurrentAccount(accounts[0]);
+      setAccounts(accountsData);
+      setCurrentAccount(accountsData[0]);
+      setPoints(pointsData);
 
       // Update the URL search parameter without triggering a navigation
       const url = new URL(window.location.href);
@@ -119,39 +113,15 @@ const Search = () => {
       {isLoading && <Loader text="Searching accounts..." />}
       {accounts.length > 0 && (
         <div className="w-full space-y-8">
-          <div className="flex flex-col items-center justify-center gap-2">
-            <p className="text-muted-foreground">
-              Found {accounts.length} accounts
-            </p>
-            <Select
-              value={currentAccount?.address}
-              onValueChange={(value) => handleAccountChange(value)}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select an account" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Accounts</SelectLabel>
-                  {accounts.map((account) => (
-                    <SelectItem key={account.address} value={account.address}>
-                      {shortAddress(account.address)}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <Link
-              href={`https://solscan.io/account/${currentAccount?.address}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <button className="flex items-center gap-1 border-b text-xs text-muted-foreground transition-colors hover:text-foreground">
-                <IconExternalLink size={13} />
-                View on Solscan
-              </button>
-            </Link>
-          </div>
+          {currentAccount && walletAddress && (
+            <CurrentAuthority
+              wallet={walletAddress}
+              points={points}
+              accounts={accounts}
+              currentAccount={currentAccount}
+              handleAccountChange={handleAccountChange}
+            />
+          )}
           {currentAccount && <CurrentAccount currentAccount={currentAccount} />}
         </div>
       )}

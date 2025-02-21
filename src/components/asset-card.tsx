@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { Balance } from "@/lib/types";
-import { getTokenIconUrl, formatUsd } from "@/lib/utils";
+import { getTokenIconUrl, formatUsd, formatNumber } from "@/lib/utils";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -41,14 +41,15 @@ const AssetCard = ({ balance, type }: AssetCardProps) => {
       <CardContent className="text-lg">
         {type === "asset" ? (
           <p className="flex items-center gap-2">
-            {balance.assets} {balance.bankMetadata.tokenSymbol}
+            {formatNumber(balance.assets)} {balance.bankMetadata.tokenSymbol}
             <span className="text-sm text-muted-foreground">
               ({formatUsd(balance.assetsUsd)})
             </span>
           </p>
         ) : (
           <p className="flex items-center gap-2">
-            {balance.liabilities} {balance.bankMetadata.tokenSymbol}
+            {formatNumber(balance.liabilities)}{" "}
+            {balance.bankMetadata.tokenSymbol}
             <span className="text-sm text-muted-foreground">
               ({formatUsd(balance.liabilitiesUsd)})
             </span>
