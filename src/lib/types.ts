@@ -25,8 +25,8 @@ export type Bank = {
   tvl: number;
   config: {
     assetTag: "Isolated" | "Native Stake" | "Global";
-    assetWeightInit: number;
-    assetWeightMaint: number;
+    assetWeight: number;
+    liabilityWeight: number;
     borrowLimit: number;
     depositLimit: number;
     operationalState: string;
@@ -34,6 +34,7 @@ export type Bank = {
     oracleKeys: string[];
     oracleMaxAge: number;
     oracleSetup: string;
+    utilization: number;
   };
 };
 
