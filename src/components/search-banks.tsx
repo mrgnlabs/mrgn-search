@@ -56,6 +56,7 @@ const SearchBanks = ({ banks, stakedBanks }: SearchBanksProps) => {
       setIsLoading(true);
       setBankDetails(null);
       setIsOpenCommandDialog(false);
+      setQuery("");
       const bank = await getBank(new PublicKey(selectedBank.address));
       setBankDetails(bank);
       setIsLoading(false);
