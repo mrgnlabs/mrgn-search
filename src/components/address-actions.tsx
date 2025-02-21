@@ -5,18 +5,18 @@ import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { IconExternalLink, IconCopy, IconCheck } from "@tabler/icons-react";
 
-import { cn } from "@/lib/utils";
+import { cn, shortAddress } from "@/lib/utils";
 
 type AddressActionsProps = {
   address: string;
+  shorten?: boolean;
   icon?: React.ReactNode;
-  shortAddress: string;
 };
 
 const AddressActions = ({
   address,
-  shortAddress,
   icon,
+  shorten = true,
 }: AddressActionsProps) => {
   const [copied, setCopied] = React.useState(false);
 
@@ -48,7 +48,7 @@ const AddressActions = ({
       </div>
       <span className="flex items-center gap-1">
         {icon}
-        {shortAddress}
+        {shorten ? shortAddress(address) : address}
       </span>
     </div>
   );

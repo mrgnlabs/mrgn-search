@@ -9,7 +9,6 @@ import { PublicKey } from "@solana/web3.js";
 import {
   getTokenIconUrl,
   getBank,
-  shortAddress,
   formatUsd,
   formatUsdShort,
   formatPercentage,
@@ -215,28 +214,19 @@ const SearchBanks = ({ banks, stakedBanks }: SearchBanksProps) => {
                   <strong className="font-medium text-muted-foreground">
                     Group Address:
                   </strong>
-                  <AddressActions
-                    address={MARGINFI_MAIN_GROUP_ID}
-                    shortAddress={shortAddress(MARGINFI_MAIN_GROUP_ID)}
-                  />
+                  <AddressActions address={MARGINFI_MAIN_GROUP_ID} />
                 </li>
                 <li className="grid w-full grid-cols-2 items-center">
                   <strong className="font-medium text-muted-foreground">
                     Bank Address:
                   </strong>
-                  <AddressActions
-                    address={selectedBank.address}
-                    shortAddress={shortAddress(selectedBank.address)}
-                  />
+                  <AddressActions address={selectedBank.address} />
                 </li>
                 <li className="grid w-full grid-cols-2 items-center">
                   <strong className="font-medium text-muted-foreground">
                     Mint Address:
                   </strong>
-                  <AddressActions
-                    address={selectedBank.tokenAddress}
-                    shortAddress={shortAddress(selectedBank.tokenAddress)}
-                  />
+                  <AddressActions address={selectedBank.tokenAddress} />
                 </li>
                 {bankDetails.config.oracleKeys.length > 0 && (
                   <li className="grid w-full grid-cols-2 items-start">
@@ -259,7 +249,6 @@ const SearchBanks = ({ banks, stakedBanks }: SearchBanksProps) => {
                                 <IconPyth size={16} />
                               )
                             }
-                            shortAddress={shortAddress(oracleKey)}
                           />
                         </div>
                       ))}
