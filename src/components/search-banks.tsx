@@ -53,6 +53,7 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
       if (!selectedBank) return;
       setIsLoading(true);
       setBankDetails(null);
+      setQuery("");
       const bank = await getBank(new PublicKey(selectedBank.address));
       setBankDetails(bank);
       setIsLoading(false);
@@ -77,7 +78,7 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
 
   return (
     <div className="w-full space-y-16 pb-16">
-      <Command className="mx-auto w-full rounded-lg border shadow-md md:max-w-lg">
+      <Command className="relative mx-auto w-full overflow-visible rounded-lg border shadow-md md:max-w-lg">
         <div className="relative w-full">
           <CommandInput
             placeholder="Search by token symbol (e.g USDC)..."
@@ -96,7 +97,10 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
           )}
         </div>
         <CommandList
-          className={cn("max-h-[316px]", !query && selectedBank && "hidden")}
+          className={cn(
+            "absolute -left-[1px] top-[45px] max-h-[316px] w-[calc(100%+1px)] border bg-background shadow-lg",
+            !query && selectedBank && "hidden",
+          )}
         >
           {query.length > 0 && <CommandEmpty>No results found.</CommandEmpty>}
           <CommandGroup heading="Banks">
@@ -170,20 +174,22 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
                 </Button>
               </Link>
             </li>
-            {bankDetails?.config.oracleKey && (
-              <li className="grid w-full grid-cols-2 items-center">
+            {bankDetails && bankDetails.config.oracleKeys.length > 0 && (
+              <li className="grid w-full grid-cols-2 items-start pt-1.5">
                 <strong className="font-medium text-muted-foreground">
-                  Oracle Address
+                  Oracle Addresses
                 </strong>
-                <div className="flex items-center justify-end gap-1">
-                  <Button variant="ghost" size="sm">
-                    {bankDetails.config.oracleSetup === "SwitchboardPull" ? (
-                      <IconSwitchboard />
-                    ) : (
-                      <IconPyth />
-                    )}
-                    {shortAddress(bankDetails?.config.oracleKey)}
-                  </Button>
+                <div className="flex flex-col items-end gap-1">
+                  {bankDetails.config.oracleKeys.map((oracleKey) => (
+                    <Button key={oracleKey} variant="ghost" size="sm">
+                      {bankDetails.config.oracleSetup === "SwitchboardPull" ? (
+                        <IconSwitchboard />
+                      ) : (
+                        <IconPyth />
+                      )}
+                      {shortAddress(oracleKey)}
+                    </Button>
+                  ))}
                 </div>
               </li>
             )}

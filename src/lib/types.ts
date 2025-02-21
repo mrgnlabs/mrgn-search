@@ -31,7 +31,7 @@ export type Bank = {
     depositLimit: number;
     operationalState: string;
     riskTier: string;
-    oracleKey: string;
+    oracleKeys: string[];
     oracleMaxAge: number;
     oracleSetup: string;
   };
