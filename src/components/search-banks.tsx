@@ -2,9 +2,8 @@
 
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
 
-import { IconExternalLink, IconX } from "@tabler/icons-react";
+import { IconX } from "@tabler/icons-react";
 import { PublicKey } from "@solana/web3.js";
 
 import {
@@ -13,6 +12,7 @@ import {
   shortAddress,
   formatUsd,
   formatUsdShort,
+  formatPercentage,
 } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { MARGINFI_MAIN_GROUP_ID } from "@/lib/consts";
@@ -33,10 +33,10 @@ import {
   CardContent,
   CardDescription,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/ui/loader";
 import { IconPyth, IconSwitchboard } from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
+import { AddressActions } from "@/components/address-actions";
 
 type SearchBanksProps = {
   banks: BankSearchResult[];
@@ -128,93 +128,34 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
       </Command>
       {selectedBank && (
         <div className="w-full space-y-6 rounded-lg bg-muted/50 p-4">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3 text-2xl font-medium">
-              <Image
-                src={getTokenIconUrl(selectedBank.tokenAddress)}
-                alt={selectedBank.tokenSymbol}
-                width={36}
-                height={36}
-                className="rounded-full"
-              />
-              {selectedBank.tokenSymbol}
-            </div>
-            {bankDetails && (
-              <Badge variant="outline">
-                {bankDetails.config.assetTag} Pool
-              </Badge>
-            )}
-          </div>
-
-          <ul className="w-full list-none">
-            <li className="grid w-full grid-cols-2 items-center">
-              <strong className="font-medium text-muted-foreground">
-                Group Address:
-              </strong>
-              <Link
-                href={`https://solscan.io/address/`}
-                className="flex items-center justify-end gap-1"
-              >
-                <Button variant="ghost" size="sm">
-                  <IconExternalLink size={12} />
-                  {shortAddress(MARGINFI_MAIN_GROUP_ID)}
-                </Button>
-              </Link>
-            </li>
-            <li className="grid w-full grid-cols-2 items-center">
-              <strong className="font-medium text-muted-foreground">
-                Bank Address:
-              </strong>
-              <Link
-                href={`https://solscan.io/address/${selectedBank.address}`}
-                className="flex items-center justify-end gap-1"
-              >
-                <Button variant="ghost" size="sm">
-                  <IconExternalLink size={12} />
-                  {shortAddress(selectedBank.address)}
-                </Button>
-              </Link>
-            </li>
-
-            <li className="grid w-full grid-cols-2 items-center">
-              <strong className="font-medium text-muted-foreground">
-                Mint Address:
-              </strong>
-              <Link
-                href={`https://solscan.io/address/${selectedBank.tokenAddress}`}
-                className="flex items-center justify-end gap-1"
-              >
-                <Button variant="ghost" size="sm">
-                  <IconExternalLink size={12} />
-                  {shortAddress(selectedBank.tokenAddress)}
-                </Button>
-              </Link>
-            </li>
-            {bankDetails && bankDetails.config.oracleKeys.length > 0 && (
-              <li className="grid w-full grid-cols-2 items-start pt-1.5">
-                <strong className="font-medium text-muted-foreground">
-                  Oracle Addresses
-                </strong>
-                <div className="flex flex-col items-end gap-1">
-                  {bankDetails.config.oracleKeys.map((oracleKey) => (
-                    <Button key={oracleKey} variant="ghost" size="sm">
-                      {bankDetails.config.oracleSetup === "SwitchboardPull" ? (
-                        <IconSwitchboard />
-                      ) : (
-                        <IconPyth />
-                      )}
-                      {shortAddress(oracleKey)}
-                    </Button>
-                  ))}
-                </div>
-              </li>
-            )}
-          </ul>
           {isLoading && (
-            <Loader text="Fetching bank details..." className="pb-8" />
+            <Loader text="Fetching bank details..." className="py-8" />
+          )}
+          {!isLoading && !bankDetails && (
+            <div className="flex items-center justify-center gap-4">
+              <p>No bank details found.</p>
+            </div>
           )}
           {bankDetails && (
             <div className="space-y-8">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 text-2xl font-medium">
+                  <Image
+                    src={getTokenIconUrl(selectedBank.tokenAddress)}
+                    alt={selectedBank.tokenSymbol}
+                    width={36}
+                    height={36}
+                    className="rounded-full"
+                  />
+                  {selectedBank.tokenSymbol}
+                </div>
+                {bankDetails && (
+                  <Badge variant="outline">
+                    {bankDetails.config.assetTag} Pool
+                  </Badge>
+                )}
+              </div>
+
               <div className="grid gap-4 md:grid-cols-3">
                 <Card>
                   <CardHeader>
@@ -251,34 +192,121 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
                   </CardContent>
                 </Card>
               </div>
-              <dl className="grid w-full grid-cols-2 gap-2 text-sm">
-                <dt>Deposit Limit</dt>
-                <dd className="text-right">
-                  {formatUsdShort(bankDetails.config.depositLimit)}{" "}
-                  {selectedBank.tokenSymbol}
-                </dd>
-                <dt>Borrow Limit</dt>
-                <dd className="text-right">
-                  {formatUsdShort(bankDetails.config.borrowLimit)}{" "}
-                  {selectedBank.tokenSymbol}
-                </dd>
-                <dt>Asset Weight Init</dt>
-                <dd className="text-right">
-                  {bankDetails.config.assetWeightInit}
-                </dd>
-                <dt>Asset Weight Maint</dt>
-                <dd className="text-right">
-                  {bankDetails.config.assetWeightMaint}
-                </dd>
-                <dt>Oracle Max Age</dt>
-                <dd className="text-right">
-                  {bankDetails.config.oracleMaxAge}s
-                </dd>
-                <dt>Operational State</dt>
-                <dd className="text-right">
-                  {bankDetails.config.operationalState}
-                </dd>
-              </dl>
+              <ul className="w-full list-none space-y-3 text-sm">
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Group Address:
+                  </strong>
+                  <AddressActions
+                    address={MARGINFI_MAIN_GROUP_ID}
+                    shortAddress={shortAddress(MARGINFI_MAIN_GROUP_ID)}
+                  />
+                </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Bank Address:
+                  </strong>
+                  <AddressActions
+                    address={selectedBank.address}
+                    shortAddress={shortAddress(selectedBank.address)}
+                  />
+                </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Mint Address:
+                  </strong>
+                  <AddressActions
+                    address={selectedBank.tokenAddress}
+                    shortAddress={shortAddress(selectedBank.tokenAddress)}
+                  />
+                </li>
+                {bankDetails.config.oracleKeys.length > 0 && (
+                  <li className="grid w-full grid-cols-2 items-start">
+                    <strong className="font-medium text-muted-foreground">
+                      Oracle Addresses
+                    </strong>
+                    <div className="flex flex-col items-end gap-2">
+                      {bankDetails.config.oracleKeys.map((oracleKey) => (
+                        <div
+                          key={oracleKey}
+                          className="flex items-center gap-1"
+                        >
+                          <AddressActions
+                            address={oracleKey}
+                            icon={
+                              bankDetails.config.oracleSetup ===
+                              "SwitchboardPull" ? (
+                                <IconSwitchboard size={16} />
+                              ) : (
+                                <IconPyth size={16} />
+                              )
+                            }
+                            shortAddress={shortAddress(oracleKey)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </li>
+                )}
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Deposit Limit
+                  </strong>
+                  <div className="text-right">
+                    {formatUsdShort(bankDetails.config.depositLimit)}{" "}
+                    {selectedBank.tokenSymbol}
+                  </div>
+                </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Borrow Limit
+                  </strong>
+                  <div className="text-right">
+                    {formatUsdShort(bankDetails.config.borrowLimit)}{" "}
+                    {selectedBank.tokenSymbol}
+                  </div>
+                </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Asset Weight
+                  </strong>
+                  <div className="text-right text-green-600">
+                    {formatPercentage(bankDetails.config.assetWeight)}
+                  </div>
+                </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Liability Weight
+                  </strong>
+                  <div className="text-right text-yellow-500">
+                    {formatPercentage(bankDetails.config.liabilityWeight)}
+                  </div>
+                </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Utilization
+                  </strong>
+                  <div className="text-right">
+                    {formatPercentage(bankDetails.config.utilization)}
+                  </div>
+                </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Oracle Max Age
+                  </strong>
+                  <div className="text-right">
+                    {bankDetails.config.oracleMaxAge}s
+                  </div>
+                </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Operational State
+                  </strong>
+                  <div className="text-right">
+                    {bankDetails.config.operationalState}
+                  </div>
+                </li>
+              </ul>
             </div>
           )}
         </div>

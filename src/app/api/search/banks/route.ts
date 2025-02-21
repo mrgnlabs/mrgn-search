@@ -119,6 +119,14 @@ export async function GET(request: Request) {
 
     const tvl = bank.computeTvl(oraclePrice).toNumber();
 
+    const utilization = bank.computeUtilizationRate().toNumber();
+
+    const assetWeightInit = bank
+      .getAssetWeight(MarginRequirementType.Initial, oraclePrice)
+      .toNumber();
+    const assetWeight = assetWeightInit || 0;
+    const liabilityWeight = 1 / bank.config.liabilityWeightInit.toNumber();
+
     const bankData: Bank = {
       address: bank.address.toBase58(),
       tokenSymbol: bankMetadata.tokenSymbol,
@@ -132,8 +140,8 @@ export async function GET(request: Request) {
             : bank.config?.assetTag && bank.config.assetTag === AssetTag.STAKED
               ? "Native Stake"
               : "Global",
-        assetWeightInit: bank.config.assetWeightInit.toNumber(),
-        assetWeightMaint: bank.config.assetWeightMaint.toNumber(),
+        assetWeight,
+        liabilityWeight,
         borrowLimit: bank.config.borrowLimit.toNumber(),
         depositLimit: bank.config.depositLimit.toNumber(),
         operationalState: bank.config.operationalState,
@@ -141,6 +149,7 @@ export async function GET(request: Request) {
         oracleKeys: oracleKeys.map((key) => key.toBase58()),
         oracleMaxAge: bank.config.oracleMaxAge,
         oracleSetup: bank.config.oracleSetup,
+        utilization,
       },
     };
 
