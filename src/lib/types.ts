@@ -43,3 +43,12 @@ export type BankSearchResult = {
   tokenSymbol: string;
   tokenAddress: string;
 };
+
+export type PointsData = {
+  owner: string;
+  depositPoints: number;
+  borrowPoints: number;
+  referralPoints: number;
+  totalPoints: number;
+  rank: number | null;
+};
