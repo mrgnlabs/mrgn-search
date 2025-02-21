@@ -2,6 +2,8 @@ import { Metadata } from "next";
 
 import { ADDRESSES } from "@/lib/consts";
 
+import { AddressActions } from "@/components/address-actions";
+
 import {
   Table,
   TableBody,
@@ -33,16 +35,20 @@ export default async function AddressesSearchPage() {
               key={index}
               className="even:bg-muted/50 hover:bg-transparent even:hover:bg-muted/50"
             >
-              <TableCell>{address.description}</TableCell>
+              <TableCell className="font-medium">
+                {address.description}
+              </TableCell>
               <TableCell>
                 {Array.isArray(address.publicKey) ? (
                   <ul>
                     {address.publicKey.map((key, i) => (
-                      <li key={i}>{key}</li>
+                      <li key={i}>
+                        <AddressActions address={key} shorten={false} />
+                      </li>
                     ))}
                   </ul>
                 ) : (
-                  address.publicKey
+                  <AddressActions address={address.publicKey} shorten={false} />
                 )}
               </TableCell>
             </TableRow>
