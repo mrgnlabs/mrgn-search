@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 
-import { IconX } from "@tabler/icons-react";
+import { IconSearch } from "@tabler/icons-react";
 import { PublicKey } from "@solana/web3.js";
 
 import {
@@ -14,12 +14,11 @@ import {
   formatUsdShort,
   formatPercentage,
 } from "@/lib/utils";
-import { cn } from "@/lib/utils";
 import { MARGINFI_MAIN_GROUP_ID } from "@/lib/consts";
 import { BankSearchResult, Bank } from "@/lib/types";
 
 import {
-  Command,
+  CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
@@ -37,13 +36,16 @@ import { Loader } from "@/components/ui/loader";
 import { IconPyth, IconSwitchboard } from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
 import { AddressActions } from "@/components/address-actions";
+import { Button } from "@/components/ui/button";
 
 type SearchBanksProps = {
   banks: BankSearchResult[];
+  stakedBanks: BankSearchResult[];
 };
 
-const SearchBanks = ({ banks }: SearchBanksProps) => {
+const SearchBanks = ({ banks, stakedBanks }: SearchBanksProps) => {
   const [query, setQuery] = React.useState("");
+  const [isOpenCommandDialog, setIsOpenCommandDialog] = React.useState(false);
   const [selectedBank, setSelectedBank] =
     React.useState<BankSearchResult | null>(null);
   const [bankDetails, setBankDetails] = React.useState<Bank | null>(null);
@@ -54,7 +56,7 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
       if (!selectedBank) return;
       setIsLoading(true);
       setBankDetails(null);
-      setQuery("");
+      setIsOpenCommandDialog(false);
       const bank = await getBank(new PublicKey(selectedBank.address));
       setBankDetails(bank);
       setIsLoading(false);
@@ -78,31 +80,27 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
   if (!banks.length) return null;
 
   return (
-    <div className="w-full space-y-16 pb-16">
-      <Command className="relative mx-auto w-full overflow-visible rounded-lg border shadow-md md:max-w-lg">
-        <div className="relative w-full">
-          <CommandInput
-            placeholder="Search by token symbol (e.g USDC)..."
-            className="h-12 md:text-lg"
-            value={query}
-            onValueChange={(value) => setQuery(value)}
-            autoFocus
-          />
-          {query && selectedBank && (
-            <button
-              onClick={() => setQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
-            >
-              <IconX size={16} />
-            </button>
-          )}
-        </div>
-        <CommandList
-          className={cn(
-            "absolute -left-[1px] top-[45px] max-h-[316px] w-[calc(100%+1px)] border bg-background shadow-lg",
-            !query && selectedBank && "hidden",
-          )}
-        >
+    <div className="w-full space-y-8 pb-16">
+      <Button
+        onClick={() => setIsOpenCommandDialog(true)}
+        variant="outline"
+        className="h-12 w-full justify-start gap-3 text-lg font-light text-muted-foreground hover:bg-accent/30"
+      >
+        <IconSearch size={16} />
+        Search by token symbol (e.g USDC)...
+      </Button>
+      <CommandDialog
+        open={isOpenCommandDialog}
+        onOpenChange={setIsOpenCommandDialog}
+      >
+        <CommandInput
+          placeholder="Search by token symbol (e.g USDC)..."
+          className="h-12 md:text-lg"
+          value={query}
+          onValueChange={(value) => setQuery(value)}
+          autoFocus
+        />
+        <CommandList>
           {query.length > 0 && <CommandEmpty>No results found.</CommandEmpty>}
           <CommandGroup heading="Banks">
             {banks.map((bank) => (
@@ -124,8 +122,28 @@ const SearchBanks = ({ banks }: SearchBanksProps) => {
               </CommandItem>
             ))}
           </CommandGroup>
+          <CommandGroup heading="Native Stake Banks">
+            {stakedBanks.map((bank) => (
+              <CommandItem
+                key={bank.address}
+                onSelect={() => setSelectedBank(bank)}
+                disabled={isLoading}
+              >
+                <div className="flex items-center gap-3 text-lg font-medium">
+                  <Image
+                    src={getTokenIconUrl(bank.tokenAddress)}
+                    alt={bank.tokenSymbol}
+                    width={24}
+                    height={24}
+                    className="rounded-full"
+                  />
+                  {bank.tokenSymbol}
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
         </CommandList>
-      </Command>
+      </CommandDialog>
       {selectedBank && (
         <div className="w-full space-y-6 rounded-lg bg-muted/50 p-4">
           {isLoading && (
