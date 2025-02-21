@@ -33,7 +33,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${aeonik.variable} antialiased`}>
+      <body
+        className={`${aeonik.variable} min-h-[calc(100vh+100px)] antialiased`}
+      >
         <Header />
         {children}
       </body>

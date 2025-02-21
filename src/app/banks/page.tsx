@@ -15,12 +15,13 @@ async function getBanks() {
   const bankMetadatas = await loadBankMetadatas();
   const stakedBankMetadatas = await loadBankMetadatas(STAKED_BANK_METADATA_URL);
 
-  const combinedBankMetadatas = {
-    ...bankMetadatas,
-    ...stakedBankMetadatas,
-  };
+  const banks = Object.entries(bankMetadatas).map(([address, metadata]) => ({
+    address,
+    tokenSymbol: metadata.tokenSymbol,
+    tokenAddress: metadata.tokenAddress,
+  }));
 
-  const allBanks = Object.entries(combinedBankMetadatas).map(
+  const stakedBanks = Object.entries(stakedBankMetadatas).map(
     ([address, metadata]) => ({
       address,
       tokenSymbol: metadata.tokenSymbol,
@@ -28,17 +29,20 @@ async function getBanks() {
     }),
   );
 
-  return allBanks;
+  return {
+    banks,
+    stakedBanks,
+  };
 }
 
 export default async function BanksSearchPage() {
-  const banks = await getBanks();
+  const { banks, stakedBanks } = await getBanks();
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 pb-8 pt-16">
       <h1 className="text-3xl">Search for marginfi banks</h1>
       <Suspense fallback={<Loader text="Loading banks..." />}>
-        <SearchBanks banks={banks} />
+        <SearchBanks banks={banks} stakedBanks={stakedBanks} />
       </Suspense>
     </div>
   );
