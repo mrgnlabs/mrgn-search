@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { Balance } from "@/lib/types";
 import { getTokenIconUrl, formatUsd, formatNumber } from "@/lib/utils";
@@ -19,23 +20,25 @@ const AssetCard = ({ balance, type }: AssetCardProps) => {
     <Card>
       <CardHeader>
         <CardTitle>
-          <div className="flex items-center gap-2">
-            <Image
-              src={getTokenIconUrl(balance.bankMetadata.tokenAddress)}
-              alt={balance.bankMetadata.tokenSymbol}
-              width={32}
-              height={32}
-              className="rounded-full"
-            />
-            <div className="flex flex-col">
-              <p className="text-sm font-medium">
-                {balance.bankMetadata.tokenName}
-              </p>
-              <p className="text-[13px] font-light text-muted-foreground">
-                {balance.bankMetadata.tokenSymbol}
-              </p>
+          <Link href={`/banks?address=${balance.bankAddress}`}>
+            <div className="flex items-center gap-2">
+              <Image
+                src={getTokenIconUrl(balance.bankMetadata.tokenAddress)}
+                alt={balance.bankMetadata.tokenSymbol}
+                width={32}
+                height={32}
+                className="rounded-full"
+              />
+              <div className="flex flex-col">
+                <p className="text-sm font-medium">
+                  {balance.bankMetadata.tokenName}
+                </p>
+                <p className="text-[13px] font-light text-muted-foreground">
+                  {balance.bankMetadata.tokenSymbol}
+                </p>
+              </div>
             </div>
-          </div>
+          </Link>
         </CardTitle>
       </CardHeader>
       <CardContent className="text-lg">

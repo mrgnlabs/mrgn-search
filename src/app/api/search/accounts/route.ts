@@ -95,6 +95,7 @@ export async function GET(request: Request) {
               assetsUsd: amountsUsd.assets.toNumber(),
               liabilitiesUsd: amountsUsd.liabilities.toNumber(),
               bankMetadata: bankMetadata,
+              bankAddress: balance.bankPk.toBase58(),
             };
           })
           .filter((balance) => balance !== undefined)

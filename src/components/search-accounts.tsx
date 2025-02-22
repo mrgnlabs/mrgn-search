@@ -55,10 +55,13 @@ const Search = () => {
       setCurrentAccount(accountsData[0]);
       setPoints(pointsData);
 
-      // Update the URL search parameter without triggering a navigation
+      // Only update URL if the wallet address has changed
       const url = new URL(window.location.href);
-      url.searchParams.set("wallet", walletAddress);
-      window.history.pushState({}, "", url.toString());
+      const currentWallet = url.searchParams.get("wallet");
+      if (currentWallet !== walletAddress) {
+        url.searchParams.set("wallet", walletAddress);
+        window.history.pushState({}, "", url.toString());
+      }
     } catch (error) {
       console.error(error);
       setError("Invalid wallet address");

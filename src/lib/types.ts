@@ -5,6 +5,7 @@ export type Balance = {
   liabilities: number;
   assetsUsd: number;
   liabilitiesUsd: number;
+  bankAddress: string;
   bankMetadata: BankMetadata;
 };
 
