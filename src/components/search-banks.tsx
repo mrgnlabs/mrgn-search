@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 import { IconSearch } from "@tabler/icons-react";
 import { PublicKey } from "@solana/web3.js";
@@ -49,6 +50,8 @@ const SearchBanks = ({ banks, stakedBanks }: SearchBanksProps) => {
     React.useState<BankSearchResult | null>(null);
   const [bankDetails, setBankDetails] = React.useState<Bank | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const searchParams = useSearchParams();
+  const addressParam = searchParams.get("address");
 
   React.useEffect(() => {
     const getBankDetails = async () => {
@@ -57,6 +60,15 @@ const SearchBanks = ({ banks, stakedBanks }: SearchBanksProps) => {
       setBankDetails(null);
       setIsOpenCommandDialog(false);
       setQuery("");
+
+      // Only update URL if the address has changed
+      const url = new URL(window.location.href);
+      const currentAddress = url.searchParams.get("address");
+      if (currentAddress !== selectedBank.address) {
+        url.searchParams.set("address", selectedBank.address);
+        window.history.pushState({}, "", url.toString());
+      }
+
       const bank = await getBank(new PublicKey(selectedBank.address));
       setBankDetails(bank);
       setIsLoading(false);
@@ -64,6 +76,18 @@ const SearchBanks = ({ banks, stakedBanks }: SearchBanksProps) => {
 
     getBankDetails();
   }, [selectedBank]);
+
+  // Add new effect to handle initial URL parameter
+  React.useEffect(() => {
+    if (addressParam) {
+      const bank =
+        banks.find((b) => b.address === addressParam) ||
+        stakedBanks.find((b) => b.address === addressParam);
+      if (bank) {
+        setSelectedBank(bank);
+      }
+    }
+  }, [addressParam, banks, stakedBanks]);
 
   // Add escape key handler
   React.useEffect(() => {
