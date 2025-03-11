@@ -23,6 +23,9 @@ const Search = () => {
   const [currentAccount, setCurrentAccount] = React.useState<Account | null>(
     null,
   );
+  const [totalPortfolioSizeUsd, setTotalPortfolioSizeUsd] = React.useState<
+    number | null
+  >(null);
 
   const searchParams = useSearchParams();
   const walletAddress = searchParams.get("wallet");
@@ -44,13 +47,14 @@ const Search = () => {
 
       const accountsData = await searchArenaAccounts(publicKey);
 
-      if (!accountsData || !accountsData.length) {
+      if (!accountsData || !accountsData.accounts.length) {
         setError("No accounts found");
         return;
       }
 
-      setAccounts(accountsData);
-      setCurrentAccount(accountsData[0]);
+      setAccounts(accountsData.accounts);
+      setCurrentAccount(accountsData.accounts[0]);
+      setTotalPortfolioSizeUsd(accountsData.totalPortfolioSizeUsd);
 
       // Only update URL if the wallet address has changed
       const url = new URL(window.location.href);
@@ -115,13 +119,17 @@ const Search = () => {
         <div className="w-full space-y-8">
           {currentAccount && walletAddress && (
             <CurrentAuthority
+              type="arena"
               wallet={walletAddress}
               accounts={accounts}
               currentAccount={currentAccount}
               handleAccountChange={handleAccountChange}
+              totalPortfolioSizeUsd={totalPortfolioSizeUsd}
             />
           )}
-          {currentAccount && <CurrentAccount currentAccount={currentAccount} />}
+          {currentAccount && (
+            <CurrentAccount type="arena" currentAccount={currentAccount} />
+          )}
         </div>
       )}
     </div>

@@ -4,6 +4,7 @@ import { PublicKey } from "@solana/web3.js";
 
 import { Account, BankSearchResult, PointsData } from "@/lib/types";
 import { Bank } from "@mrgnlabs/marginfi-client-v2";
+
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 export const formatPercentage = (value: number) =>
@@ -91,7 +92,7 @@ export const getPoints = async (wallet: string): Promise<PointsData> => {
 
 export const searchArenaAccounts = async (
   query: PublicKey,
-): Promise<Account[]> => {
+): Promise<{ accounts: Account[]; totalPortfolioSizeUsd: number }> => {
   const response = await fetch(
     process.env.NEXT_PUBLIC_BASE_URL +
       `/api/search/arena/accounts?wallet=${query.toBase58()}`,

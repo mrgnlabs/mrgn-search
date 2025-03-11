@@ -2,6 +2,7 @@ import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import { NextResponse } from "next/server";
 
 import { AnchorProvider, Program, Wallet } from "@coral-xyz/anchor";
+import BigNumber from "bignumber.js";
 import {
   MARGINFI_IDL,
   MarginfiProgram,
@@ -9,11 +10,10 @@ import {
   getConfig,
   MarginfiClient,
 } from "@mrgnlabs/marginfi-client-v2";
+import { BankMetadata } from "@mrgnlabs/mrgn-common";
 
 import { ArenaPool } from "@/lib/types";
 import { MARGINFI_PROGRAM_ID } from "@/lib/consts";
-import { BankMetadata } from "@mrgnlabs/mrgn-common";
-import BigNumber from "bignumber.js";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -243,7 +243,16 @@ export async function GET(request: Request) {
       )
     ).filter((account) => account !== undefined);
 
-    return NextResponse.json(data);
+    // Calculate total portfolio size in USD across all accounts
+    const totalPortfolioSizeUsd = data.reduce(
+      (total, account) => total + account.portfolioBalanceUsd,
+      0,
+    );
+
+    return NextResponse.json({
+      accounts: data,
+      totalPortfolioSizeUsd,
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

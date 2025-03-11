@@ -5,7 +5,7 @@ import Link from "next/link";
 import { IconExternalLink, IconTrophy } from "@tabler/icons-react";
 
 import { Account, PointsData } from "@/lib/types";
-import { formatNumber, shortAddress } from "@/lib/utils";
+import { formatNumber, formatUsd, shortAddress } from "@/lib/utils";
 
 import {
   Select,
@@ -22,10 +22,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 type CurrentAuthorityProps = {
   wallet: string;
   points?: PointsData | null;
+  totalPortfolioSizeUsd?: number | null;
+  type?: "arena" | "marginfi";
   accounts: Account[];
   currentAccount: Account;
   handleAccountChange: (account: string) => void;
@@ -34,6 +37,8 @@ type CurrentAuthorityProps = {
 const CurrentAuthority = ({
   wallet,
   points,
+  totalPortfolioSizeUsd,
+  type = "marginfi",
   accounts,
   currentAccount,
   handleAccountChange,
@@ -46,7 +51,7 @@ const CurrentAuthority = ({
             <strong className="mr-1 font-medium">Wallet:</strong>{" "}
             {shortAddress(wallet)}
           </li>
-          {points && (
+          {type === "marginfi" && points && (
             <li className="flex items-center gap-1">
               <strong className="font-medium">Total Points:</strong>{" "}
               <Popover>
@@ -85,9 +90,30 @@ const CurrentAuthority = ({
           )}
         </ul>
       </div>
+      {type === "arena" && totalPortfolioSizeUsd && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-medium">
+                Arena Portfolio Size
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl">{formatUsd(totalPortfolioSizeUsd)}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-medium">Arena Portfolio PnL</CardTitle>
+            </CardHeader>
+            <CardContent>*coming soon*</CardContent>
+          </Card>
+        </div>
+      )}
       <div className="flex flex-col items-center justify-center gap-1 text-sm">
         <p className="text-muted-foreground">
-          Found {accounts.length} accounts
+          Found {accounts.length}{" "}
+          {type === "marginfi" ? "accounts" : "open positions"}
         </p>
         <Select
           value={currentAccount?.address}
