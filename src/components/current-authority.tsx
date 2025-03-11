@@ -25,7 +25,7 @@ import { Button } from "./ui/button";
 
 type CurrentAuthorityProps = {
   wallet: string;
-  points: PointsData | null;
+  points?: PointsData | null;
   accounts: Account[];
   currentAccount: Account;
   handleAccountChange: (account: string) => void;
@@ -46,41 +46,43 @@ const CurrentAuthority = ({
             <strong className="mr-1 font-medium">Wallet:</strong>{" "}
             {shortAddress(wallet)}
           </li>
-          <li className="flex items-center gap-1">
-            <strong className="font-medium">Total Points:</strong>{" "}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="ghost" className="h-auto px-2 py-1">
-                  <IconTrophy size={16} />{" "}
-                  {formatNumber(points?.totalPoints || 0)}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <ul className="space-y-1 text-sm">
-                  <li className="flex items-center gap-1">
-                    <strong className="font-medium">Rank:</strong>{" "}
-                    {points?.rank || "N/A"}
-                  </li>
-                  <li>
-                    <strong className="font-medium">Deposit Points:</strong>{" "}
-                    {formatNumber(points?.depositPoints || 0)}
-                  </li>
-                  <li>
-                    <strong className="font-medium">Borrow Points:</strong>{" "}
-                    {formatNumber(points?.borrowPoints || 0)}
-                  </li>
-                  <li>
-                    <strong className="font-medium">Referral Points:</strong>{" "}
-                    {formatNumber(points?.referralPoints || 0)}
-                  </li>
-                  <li>
-                    <strong className="font-medium">Total Points:</strong>{" "}
+          {points && (
+            <li className="flex items-center gap-1">
+              <strong className="font-medium">Total Points:</strong>{" "}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" className="h-auto px-2 py-1">
+                    <IconTrophy size={16} />{" "}
                     {formatNumber(points?.totalPoints || 0)}
-                  </li>
-                </ul>
-              </PopoverContent>
-            </Popover>
-          </li>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <ul className="space-y-1 text-sm">
+                    <li className="flex items-center gap-1">
+                      <strong className="font-medium">Rank:</strong>{" "}
+                      {points?.rank || "N/A"}
+                    </li>
+                    <li>
+                      <strong className="font-medium">Deposit Points:</strong>{" "}
+                      {formatNumber(points?.depositPoints || 0)}
+                    </li>
+                    <li>
+                      <strong className="font-medium">Borrow Points:</strong>{" "}
+                      {formatNumber(points?.borrowPoints || 0)}
+                    </li>
+                    <li>
+                      <strong className="font-medium">Referral Points:</strong>{" "}
+                      {formatNumber(points?.referralPoints || 0)}
+                    </li>
+                    <li>
+                      <strong className="font-medium">Total Points:</strong>{" "}
+                      {formatNumber(points?.totalPoints || 0)}
+                    </li>
+                  </ul>
+                </PopoverContent>
+              </Popover>
+            </li>
+          )}
         </ul>
       </div>
       <div className="flex flex-col items-center justify-center gap-1 text-sm">
@@ -91,15 +93,21 @@ const CurrentAuthority = ({
           value={currentAccount?.address}
           onValueChange={(value) => handleAccountChange(value)}
         >
-          <SelectTrigger className="h-7 w-[180px] text-sm">
+          <SelectTrigger className="h-7 w-[200px] text-sm">
             <SelectValue placeholder="Select an account" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent align="center">
             <SelectGroup>
               <SelectLabel>Accounts</SelectLabel>
               {accounts.map((account) => (
                 <SelectItem key={account.address} value={account.address}>
                   {shortAddress(account.address)}
+                  {account.pool && (
+                    <span className="ml-4 text-xs text-muted-foreground">
+                      {account.pool.base_bank.mint.symbol} /{" "}
+                      {account.pool.quote_bank.mint.symbol}
+                    </span>
+                  )}
                 </SelectItem>
               ))}
             </SelectGroup>
