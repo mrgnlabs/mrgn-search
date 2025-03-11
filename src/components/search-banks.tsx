@@ -69,7 +69,7 @@ const SearchBanks = ({ banks, stakedBanks }: SearchBanksProps) => {
         window.history.pushState({}, "", url.toString());
       }
 
-      const bank = await getBank(new PublicKey(selectedBank.address));
+      const bank: Bank = await getBank(new PublicKey(selectedBank.address));
       setBankDetails(bank);
       setIsLoading(false);
     };
