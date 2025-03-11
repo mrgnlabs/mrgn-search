@@ -2,8 +2,8 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { PublicKey } from "@solana/web3.js";
 
-import { Account, Bank, BankSearchResult, PointsData } from "@/lib/types";
-
+import { Account, BankSearchResult, PointsData } from "@/lib/types";
+import { Bank } from "@mrgnlabs/marginfi-client-v2";
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 export const formatPercentage = (value: number) =>
@@ -86,5 +86,17 @@ export const getPoints = async (wallet: string): Promise<PointsData> => {
     process.env.NEXT_PUBLIC_BASE_URL + `/api/search/points?wallet=${wallet}`,
   );
   const data = await response.json();
+  return data;
+};
+
+export const searchArenaAccounts = async (
+  query: PublicKey,
+): Promise<Account[]> => {
+  const response = await fetch(
+    process.env.NEXT_PUBLIC_BASE_URL +
+      `/api/search/arena/accounts?wallet=${query.toBase58()}`,
+  );
+  const data = await response.json();
+
   return data;
 };

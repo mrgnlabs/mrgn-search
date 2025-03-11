@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   formatPercentage,
   formatUsd,
@@ -13,8 +15,38 @@ type CurrentAccountProps = {
 };
 
 const CurrentAccount = ({ currentAccount }: CurrentAccountProps) => {
+  const poolName = `${currentAccount.pool?.base_bank.mint.symbol}/${currentAccount.pool?.quote_bank.mint.symbol}`;
+
+  const positionType = React.useMemo(() => {
+    const baseBalance = currentAccount.balances.find(
+      (balance) =>
+        balance.bankAddress === currentAccount.pool?.base_bank.address,
+    );
+
+    if (!baseBalance) return "none";
+    if (baseBalance.assets > 0) return "long";
+    if (baseBalance.liabilities > 0) return "short";
+    return "none";
+  }, [currentAccount.balances, currentAccount.pool?.base_bank.address]);
+
   return (
-    <div className="w-full space-y-16">
+    <div className="w-full space-y-4">
+      {currentAccount.pool && (
+        <div className="w-full space-y-2">
+          <h2 className="text-lg font-medium">
+            Open {poolName}{" "}
+            <span
+              className={cn(
+                "uppercase",
+                positionType === "long" ? "text-green-500" : "text-red-500",
+              )}
+            >
+              {positionType}
+            </span>{" "}
+            Position
+          </h2>
+        </div>
+      )}
       <div className="space-y-6">
         <div className="space-y-2">
           <div className="flex w-full flex-col gap-1">

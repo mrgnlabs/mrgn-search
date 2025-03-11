@@ -11,6 +11,7 @@ export type Balance = {
 
 export type Account = {
   address: string;
+  pool?: ArenaPool;
   healthFactor: number;
   totalAssetsUsd: number;
   totalLiabilitiesUsd: number;
@@ -52,4 +53,34 @@ export type PointsData = {
   referralPoints: number;
   totalPoints: number;
   rank: number | null;
+};
+
+export type ArenaBank = {
+  address: string;
+  group: string;
+  mint: {
+    address: string;
+    decimals: number;
+    name: string | null;
+    symbol: string | null;
+    token_program: string;
+  };
+  details: {
+    deposit_rate: number;
+    borrow_rate: number;
+    total_deposits: number;
+    total_deposits_usd: number;
+    total_borrows: number;
+    total_borrows_usd: number;
+  };
+};
+
+export type ArenaPool = {
+  group: string;
+  quote_bank: ArenaBank;
+  base_bank: ArenaBank;
+  lookup_tables: string[];
+  featured: boolean;
+  created_at: string;
+  created_by: string;
 };

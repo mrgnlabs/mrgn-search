@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@coral-xyz/anchor": "^0.30.1",
     "@mrgnlabs/marginfi-client-v2": "5.0.0-beta.2",
     "@mrgnlabs/mrgn-common": "2.0.0-beta.2",
     "@radix-ui/react-dialog": "^1.1.6",
