@@ -57,7 +57,7 @@ export const getTokenIconUrl = (address: string) => {
 export const searchAccounts = async (query: PublicKey): Promise<Account[]> => {
   const response = await fetch(
     process.env.NEXT_PUBLIC_BASE_URL +
-      `/api/search/accounts?wallet=${query.toBase58()}`,
+      `/api/search/marginfi/accounts?wallet=${query.toBase58()}`,
   );
   const data = await response.json();
 
@@ -66,7 +66,7 @@ export const searchAccounts = async (query: PublicKey): Promise<Account[]> => {
 
 export const searchBanks = async (): Promise<BankSearchResult[]> => {
   const response = await fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + "/api/search/banks",
+    process.env.NEXT_PUBLIC_BASE_URL + "/api/search/marginfi/banks",
   );
   const data = await response.json();
   return data;
@@ -75,7 +75,7 @@ export const searchBanks = async (): Promise<BankSearchResult[]> => {
 export const getBank = async (address: PublicKey): Promise<Bank> => {
   const response = await fetch(
     process.env.NEXT_PUBLIC_BASE_URL +
-      `/api/search/banks?address=${address.toBase58()}`,
+      `/api/search/marginfi/banks?address=${address.toBase58()}`,
   );
   const data = await response.json();
   return data as Bank;
@@ -83,7 +83,8 @@ export const getBank = async (address: PublicKey): Promise<Bank> => {
 
 export const getPoints = async (wallet: string): Promise<PointsData> => {
   const response = await fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + `/api/search/points?wallet=${wallet}`,
+    process.env.NEXT_PUBLIC_BASE_URL +
+      `/api/search/marginfi/points?wallet=${wallet}`,
   );
   const data = await response.json();
   return data;
