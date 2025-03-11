@@ -11,10 +11,14 @@ import { AssetCard } from "@/components/asset-card";
 import { Account } from "@/lib/types";
 
 type CurrentAccountProps = {
+  type?: "marginfi" | "arena";
   currentAccount: Account;
 };
 
-const CurrentAccount = ({ currentAccount }: CurrentAccountProps) => {
+const CurrentAccount = ({
+  currentAccount,
+  type = "marginfi",
+}: CurrentAccountProps) => {
   const poolName = `${currentAccount.pool?.base_bank.mint.symbol}/${currentAccount.pool?.quote_bank.mint.symbol}`;
 
   const positionType = React.useMemo(() => {
@@ -29,12 +33,44 @@ const CurrentAccount = ({ currentAccount }: CurrentAccountProps) => {
     return "none";
   }, [currentAccount.balances, currentAccount.pool?.base_bank.address]);
 
+  const leverage = React.useMemo(() => {
+    const baseBalance = currentAccount.balances.find(
+      (balance) =>
+        balance.bankAddress === currentAccount.pool?.base_bank.address,
+    );
+    const quoteBalance = currentAccount.balances.find(
+      (balance) =>
+        balance.bankAddress === currentAccount.pool?.quote_bank.address,
+    );
+
+    if (!baseBalance || !quoteBalance) return 0;
+
+    if (positionType === "long") {
+      return (
+        Math.round(
+          (baseBalance?.assetsUsd /
+            (baseBalance?.assetsUsd - quoteBalance?.liabilitiesUsd) +
+            Number.EPSILON) *
+            100,
+        ) / 100
+      );
+    } else if (positionType === "short") {
+      return (
+        Math.round(
+          (quoteBalance?.assetsUsd /
+            (quoteBalance?.assetsUsd - baseBalance?.liabilitiesUsd) +
+            Number.EPSILON) *
+            100,
+        ) / 100
+      );
+    }
+  }, [currentAccount, positionType]);
+
   return (
     <div className="w-full space-y-4">
-      {currentAccount.pool && (
+      {type === "arena" && currentAccount.pool && (
         <div className="w-full space-y-2">
-          <h2 className="text-lg font-medium">
-            Open {poolName}{" "}
+          <h2 className="text-center text-lg font-medium">
             <span
               className={cn(
                 "uppercase",
@@ -43,7 +79,7 @@ const CurrentAccount = ({ currentAccount }: CurrentAccountProps) => {
             >
               {positionType}
             </span>{" "}
-            Position
+            {poolName} with {leverage}x leverage
           </h2>
         </div>
       )}

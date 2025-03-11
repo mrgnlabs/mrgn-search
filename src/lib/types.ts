@@ -11,12 +11,13 @@ export type Balance = {
 
 export type Account = {
   address: string;
-  pool?: ArenaPool;
   healthFactor: number;
   totalAssetsUsd: number;
   totalLiabilitiesUsd: number;
   portfolioBalanceUsd: number;
   balances: Balance[];
+  pool?: ArenaPool;
+  totalPortfolioSizeUsd?: number;
 };
 
 export type Bank = {
