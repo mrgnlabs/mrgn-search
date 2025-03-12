@@ -340,6 +340,46 @@ const SearchBanks = ({ banks, stakedBanks }: SearchBanksProps) => {
                     {bankDetails.config.operationalState}
                   </div>
                 </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Insurance Fee Fixed APR
+                  </strong>
+                  <div className="text-right">
+                    {bankDetails.config.fees.insuranceFeeFixedApr}
+                  </div>
+                </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Insurance IR Fee
+                  </strong>
+                  <div className="text-right">
+                    {bankDetails.config.fees.insuranceIrFee}
+                  </div>
+                </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Protocol Fixed Fee APR
+                  </strong>
+                  <div className="text-right">
+                    {bankDetails.config.fees.protocolFixedFeeApr}
+                  </div>
+                </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Protocol IR Fee
+                  </strong>
+                  <div className="text-right">
+                    {bankDetails.config.fees.protocolIrFee}
+                  </div>
+                </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Protocol Origination Fee
+                  </strong>
+                  <div className="text-right">
+                    {bankDetails.config.fees.protocolOriginationFee}
+                  </div>
+                </li>
               </ul>
             </div>
           )}

@@ -232,6 +232,18 @@ export async function GET(request: Request) {
           oracleMaxAge: bank.config.oracleMaxAge,
           oracleSetup: bank.config.oracleSetup,
           utilization,
+          fees: {
+            insuranceFeeFixedApr:
+              bank.config.interestRateConfig.insuranceFeeFixedApr.toNumber(),
+            insuranceIrFee:
+              bank.config.interestRateConfig.insuranceIrFee.toNumber(),
+            protocolFixedFeeApr:
+              bank.config.interestRateConfig.protocolFixedFeeApr.toNumber(),
+            protocolIrFee:
+              bank.config.interestRateConfig.protocolIrFee.toNumber(),
+            protocolOriginationFee:
+              bank.config.interestRateConfig.protocolOriginationFee.toNumber(),
+          },
         },
       };
 
