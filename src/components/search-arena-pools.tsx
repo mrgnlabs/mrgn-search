@@ -288,6 +288,14 @@ const SearchArenaPools = ({ pools }: SearchArenaPoolsProps) => {
                         </strong>
                         <AddressActions address={bank.tokenAddress} />
                       </li>
+                      <li className="grid w-full grid-cols-2 items-center">
+                        <strong className="font-medium text-muted-foreground">
+                          Oracle Price:
+                        </strong>
+                        <div className="text-right">
+                          {formatUsd(bank.oraclePrice)}
+                        </div>
+                      </li>
                       {bank.config.oracleKeys.length > 0 && (
                         <li className="grid w-full grid-cols-2 items-start">
                           <strong className="font-medium text-muted-foreground">

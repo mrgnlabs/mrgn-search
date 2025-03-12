@@ -255,6 +255,14 @@ const SearchBanks = ({ banks, stakedBanks }: SearchBanksProps) => {
                   </strong>
                   <AddressActions address={selectedBank.tokenAddress} />
                 </li>
+                <li className="grid w-full grid-cols-2 items-center">
+                  <strong className="font-medium text-muted-foreground">
+                    Oracle Price:
+                  </strong>
+                  <div className="text-right">
+                    {formatUsd(bankDetails.oraclePrice)}
+                  </div>
+                </li>
                 {bankDetails.config.oracleKeys.length > 0 && (
                   <li className="grid w-full grid-cols-2 items-start">
                     <strong className="font-medium text-muted-foreground">

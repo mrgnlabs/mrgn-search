@@ -28,6 +28,7 @@ export type Bank = {
   totalAssetsUsd: number;
   totalLiabilitiesUsd: number;
   tvl: number;
+  oraclePrice: number;
   config: {
     assetTag: "Isolated" | "Native Stake" | "Global";
     assetWeight: number;
