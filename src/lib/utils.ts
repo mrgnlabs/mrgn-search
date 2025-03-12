@@ -24,6 +24,9 @@ export const formatNumber = (value: number) => {
 };
 
 export const formatUsd = (value: number) => {
+  if (value < 0.01) {
+    return value.toFixed(8);
+  }
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",

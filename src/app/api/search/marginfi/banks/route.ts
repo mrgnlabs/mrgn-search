@@ -134,6 +134,7 @@ export async function GET(request: Request) {
       totalAssetsUsd,
       totalLiabilitiesUsd,
       tvl,
+      oraclePrice: oraclePrice.priceRealtime.price.toNumber(),
       config: {
         assetTag:
           bank.config.riskTier === RiskTier.Isolated
