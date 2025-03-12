@@ -40,7 +40,7 @@ import { Button } from "@/components/ui/button";
 
 type SearchBanksProps = {
   banks: BankSearchResult[];
-  stakedBanks: BankSearchResult[];
+  stakedBanks?: BankSearchResult[];
 };
 
 const SearchBanks = ({ banks, stakedBanks }: SearchBanksProps) => {
@@ -82,7 +82,7 @@ const SearchBanks = ({ banks, stakedBanks }: SearchBanksProps) => {
     if (addressParam) {
       const bank =
         banks.find((b) => b.address === addressParam) ||
-        stakedBanks.find((b) => b.address === addressParam);
+        stakedBanks?.find((b) => b.address === addressParam);
       if (bank) {
         setSelectedBank(bank);
       }
@@ -146,26 +146,28 @@ const SearchBanks = ({ banks, stakedBanks }: SearchBanksProps) => {
               </CommandItem>
             ))}
           </CommandGroup>
-          <CommandGroup heading="Native Stake Banks">
-            {stakedBanks.map((bank) => (
-              <CommandItem
-                key={bank.address}
-                onSelect={() => setSelectedBank(bank)}
-                disabled={isLoading}
-              >
-                <div className="flex items-center gap-3 text-lg font-medium">
-                  <Image
-                    src={getTokenIconUrl(bank.tokenAddress)}
-                    alt={bank.tokenSymbol}
-                    width={24}
-                    height={24}
-                    className="rounded-full"
-                  />
-                  {bank.tokenSymbol}
-                </div>
-              </CommandItem>
-            ))}
-          </CommandGroup>
+          {stakedBanks && (
+            <CommandGroup heading="Native Stake Banks">
+              {stakedBanks.map((bank) => (
+                <CommandItem
+                  key={bank.address}
+                  onSelect={() => setSelectedBank(bank)}
+                  disabled={isLoading}
+                >
+                  <div className="flex items-center gap-3 text-lg font-medium">
+                    <Image
+                      src={getTokenIconUrl(bank.tokenAddress)}
+                      alt={bank.tokenSymbol}
+                      width={24}
+                      height={24}
+                      className="rounded-full"
+                    />
+                    {bank.tokenSymbol}
+                  </div>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
         </CommandList>
       </CommandDialog>
       {selectedBank && (

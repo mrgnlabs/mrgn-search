@@ -22,6 +22,7 @@ export type Account = {
 
 export type Bank = {
   address: string;
+  tokenAddress: string;
   tokenSymbol: string;
   totalAssetsUsd: number;
   totalLiabilitiesUsd: number;
@@ -84,4 +85,16 @@ export type ArenaPool = {
   featured: boolean;
   created_at: string;
   created_by: string;
+};
+
+export type ArenaPoolSearchResult = {
+  banks: Bank[];
+};
+
+export type BirdeyePrice = {
+  value: number;
+};
+
+export type BirdeyePriceMap = {
+  [key: string]: BirdeyePrice;
 };

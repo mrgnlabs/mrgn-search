@@ -2,7 +2,14 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { PublicKey } from "@solana/web3.js";
 
-import { Account, BankSearchResult, PointsData, Bank } from "@/lib/types";
+import {
+  Account,
+  BankSearchResult,
+  PointsData,
+  Bank,
+  ArenaPoolSearchResult,
+  BirdeyePriceMap,
+} from "@/lib/types";
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
@@ -81,6 +88,17 @@ export const getBank = async (address: PublicKey): Promise<Bank> => {
   return data as Bank;
 };
 
+export const getArenaPool = async (
+  groupAddress: PublicKey,
+): Promise<ArenaPoolSearchResult> => {
+  const response = await fetch(
+    process.env.NEXT_PUBLIC_BASE_URL +
+      `/api/search/arena/pools?address=${groupAddress.toBase58()}`,
+  );
+  const data = await response.json();
+  return data as ArenaPoolSearchResult;
+};
+
 export const getPoints = async (wallet: string): Promise<PointsData> => {
   const response = await fetch(
     process.env.NEXT_PUBLIC_BASE_URL +
@@ -99,5 +117,17 @@ export const searchArenaAccounts = async (
   );
   const data = await response.json();
 
+  return data;
+};
+
+export const getBirdeyePrices = async (
+  addresses: string[],
+): Promise<BirdeyePriceMap> => {
+  const response = await fetch(
+    process.env.NEXT_PUBLIC_BASE_URL +
+      `/api/prices?addresses=${addresses.join(",")}`,
+  );
+  const data = await response.json();
+  console.log("data", data);
   return data;
 };

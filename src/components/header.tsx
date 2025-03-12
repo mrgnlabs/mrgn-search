@@ -7,7 +7,6 @@ import { useRouter, usePathname } from "next/navigation";
 
 import {
   IconAddressBook,
-  IconBuildingBank,
   IconBrandGithub,
   IconMenu2,
   IconCheck,
@@ -36,11 +35,6 @@ import { IconMrgn } from "@/components/ui/icons";
 
 const links = [
   {
-    href: "/banks",
-    label: "Search banks",
-    icon: <IconBuildingBank />,
-  },
-  {
     href: "/addresses",
     label: "Common addresses",
     icon: <IconAddressBook />,
@@ -56,6 +50,7 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
   const [accountDropdownOpen, setAccountDropdownOpen] = React.useState(false);
+  const [bankDropdownOpen, setBankDropdownOpen] = React.useState(false);
 
   return (
     <header className="flex items-center gap-8 p-4">
@@ -98,6 +93,44 @@ const Header = () => {
               >
                 {pathname === "/arena" && <IconCheck size={16} />}
                 arena accounts
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu
+          open={bankDropdownOpen}
+          onOpenChange={setBankDropdownOpen}
+        >
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className={cn(
+                "gap-2",
+                (pathname === "/banks" || pathname === "/arena/pools") &&
+                  "bg-muted",
+              )}
+            >
+              Search banks
+              <IconChevronDown size={16} />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                onSelect={() => {
+                  router.push("/banks");
+                }}
+              >
+                {pathname === "/banks" && <IconCheck size={16} />}
+                marginfi banks
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => {
+                  router.push("/arena/pools");
+                }}
+              >
+                {pathname === "/arena/pools" && <IconCheck size={16} />}
+                arena pools
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
