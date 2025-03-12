@@ -98,3 +98,11 @@ export type BirdeyePrice = {
 export type BirdeyePriceMap = {
   [key: string]: BirdeyePrice;
 };
+
+export type PositionDetails = {
+  status: "short" | "long" | "lp" | "none";
+  totalUsdValue: number;
+  positionSizeUsd: number;
+  positionSizeToken: number;
+  leverage: number;
+};

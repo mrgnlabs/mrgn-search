@@ -9,6 +9,9 @@ import {
   Bank,
   ArenaPoolSearchResult,
   BirdeyePriceMap,
+  ArenaPool,
+  Balance,
+  PositionDetails,
 } from "@/lib/types";
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
@@ -130,4 +133,72 @@ export const getBirdeyePrices = async (
   const data = await response.json();
   console.log("data", data);
   return data;
+};
+
+export function getPositionType({
+  balances,
+  pool,
+}: {
+  balances: Balance[];
+  pool: ArenaPool;
+}) {
+  const baseBalance = balances.find(
+    (balance) => balance.bankAddress === pool.base_bank.address,
+  );
+  const quoteBalance = balances.find(
+    (balance) => balance.bankAddress === pool.quote_bank.address,
+  );
+
+  if (!baseBalance || !quoteBalance) return "none";
+  if (
+    (baseBalance.assets > 0 || quoteBalance.assets > 0) &&
+    baseBalance.liabilities === 0 &&
+    quoteBalance.liabilities === 0
+  )
+    return "lp";
+  if (baseBalance.assets > 0) return "long";
+  if (baseBalance.liabilities > 0) return "short";
+  return "none";
+}
+
+export const getPositionDetails = ({
+  balances,
+  pool,
+}: {
+  balances: Balance[];
+  pool: ArenaPool;
+}): PositionDetails => {
+  const status = getPositionType({ balances, pool });
+  const baseBalance = balances.find(
+    (balance) => balance.bankAddress === pool.base_bank.address,
+  );
+  const quoteBalance = balances.find(
+    (balance) => balance.bankAddress === pool.quote_bank.address,
+  );
+
+  let depositValue = 0,
+    borrowValue = 0,
+    depositSize = 0;
+
+  if (status === "short") {
+    depositValue = quoteBalance?.assetsUsd || 0;
+    borrowValue = baseBalance?.liabilitiesUsd || 0;
+    depositSize = quoteBalance?.assets || 0;
+  } else if (status === "long") {
+    depositValue = baseBalance?.assetsUsd || 0;
+    borrowValue = quoteBalance?.liabilitiesUsd || 0;
+    depositSize = baseBalance?.assets || 0;
+  }
+
+  const leverage = Number(
+    (depositValue / (depositValue - borrowValue) + Number.EPSILON).toFixed(4),
+  );
+
+  return {
+    status,
+    totalUsdValue: depositValue - borrowValue,
+    positionSizeUsd: depositValue,
+    positionSizeToken: depositSize,
+    leverage,
+  };
 };
