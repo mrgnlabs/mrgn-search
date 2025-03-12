@@ -9,9 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 type AssetCardProps = {
   balance: Balance;
   type: "asset" | "liability";
+  link: string;
 };
 
-const AssetCard = ({ balance, type }: AssetCardProps) => {
+const AssetCard = ({ balance, type, link }: AssetCardProps) => {
   if (!balance.bankMetadata) {
     return null;
   }
@@ -20,7 +21,7 @@ const AssetCard = ({ balance, type }: AssetCardProps) => {
     <Card>
       <CardHeader>
         <CardTitle>
-          <Link href={`/banks?address=${balance.bankAddress}`}>
+          <Link href={link}>
             <div className="flex items-center gap-2">
               <Image
                 src={getTokenIconUrl(balance.bankMetadata.tokenAddress)}

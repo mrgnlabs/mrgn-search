@@ -1,14 +1,15 @@
 import React from "react";
+import Link from "next/link";
 
+import { Account } from "@/lib/types";
 import {
   formatPercentage,
   formatUsd,
   healthFactorColor,
   cn,
 } from "@/lib/utils";
-import { AssetCard } from "@/components/asset-card";
 
-import { Account } from "@/lib/types";
+import { AssetCard } from "@/components/asset-card";
 
 type CurrentAccountProps = {
   type?: "marginfi" | "arena";
@@ -79,7 +80,13 @@ const CurrentAccount = ({
             >
               {positionType}
             </span>{" "}
-            {poolName} with {leverage}x leverage
+            <Link
+              href={`/arena/pools?address=${currentAccount.pool?.group}`}
+              className="border-b transition-colors hover:border-transparent"
+            >
+              {poolName}
+            </Link>{" "}
+            with {leverage}x leverage
           </h2>
         </div>
       )}
@@ -139,7 +146,16 @@ const CurrentAccount = ({
               {currentAccount.balances
                 .filter((balance) => balance.assetsUsd > 0)
                 .map((balance, index) => (
-                  <AssetCard type="asset" balance={balance} key={index} />
+                  <AssetCard
+                    type="asset"
+                    balance={balance}
+                    key={index}
+                    link={
+                      type === "arena"
+                        ? `/arena/pools?address=${currentAccount.pool?.group}`
+                        : `/banks?address=${balance.bankAddress}`
+                    }
+                  />
                 ))}
             </div>
           </div>
@@ -149,7 +165,16 @@ const CurrentAccount = ({
               {currentAccount.balances
                 .filter((balance) => balance.liabilitiesUsd > 0)
                 .map((balance, index) => (
-                  <AssetCard type="liability" balance={balance} key={index} />
+                  <AssetCard
+                    type="liability"
+                    balance={balance}
+                    key={index}
+                    link={
+                      type === "arena"
+                        ? `/arena/pools?address=${currentAccount.pool?.group}`
+                        : `/banks?address=${balance.bankAddress}`
+                    }
+                  />
                 ))}
             </div>
           </div>
