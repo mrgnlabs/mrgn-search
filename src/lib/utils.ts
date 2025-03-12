@@ -149,9 +149,9 @@ export function getPositionType({
     (balance) => balance.bankAddress === pool.quote_bank.address,
   );
 
-  if (!baseBalance || !quoteBalance) return "lp";
-  if (baseBalance.assets > 0) return "long";
-  if (baseBalance.liabilities > 0) return "short";
+  if (!baseBalance?.liabilities && !quoteBalance?.liabilities) return "lp";
+  if (baseBalance?.assets && baseBalance.assets > 0) return "long";
+  if (baseBalance?.liabilities && baseBalance.liabilities > 0) return "short";
   return "none";
 }
 
