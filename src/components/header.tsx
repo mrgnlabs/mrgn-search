@@ -80,7 +80,9 @@ const Header = () => {
             <DropdownMenuGroup>
               <DropdownMenuItem
                 onSelect={() => {
-                  router.push("/");
+                  const query = window.location.search;
+                  const url = "/" + query;
+                  router.push(url);
                 }}
               >
                 {pathname === "/" && <IconCheck size={16} />}
@@ -88,7 +90,9 @@ const Header = () => {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onSelect={() => {
-                  router.push("/arena");
+                  const query = window.location.search;
+                  const url = "/arena" + query;
+                  router.push(url);
                 }}
               >
                 {pathname === "/arena" && <IconCheck size={16} />}
