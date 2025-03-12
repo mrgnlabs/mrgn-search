@@ -41,17 +41,21 @@ const CurrentAccount = ({
   return (
     <div className="w-full space-y-4">
       {type === "arena" && currentAccount.pool && (
-        <div className="w-full space-y-2">
-          <h2 className="text-center text-lg font-medium">
+        <div className="flex w-full flex-col items-center justify-center gap-2 text-center">
+          <h2 className="text-lg font-medium">
             <span
               className={cn(
-                "uppercase",
+                "",
                 positionDetails.status === "long"
-                  ? "text-green-500"
-                  : "text-red-500",
+                  ? "uppercase text-green-500"
+                  : positionDetails.status === "short"
+                    ? "uppercase text-red-500"
+                    : "text-foreground",
               )}
             >
-              {positionDetails.status}
+              {positionDetails.status === "lp"
+                ? "Providing Liquidity to"
+                : positionDetails.status}
             </span>{" "}
             <Link
               href={`/arena/pools?address=${currentAccount.pool?.group}`}
@@ -59,8 +63,34 @@ const CurrentAccount = ({
             >
               {poolName}
             </Link>{" "}
-            with {positionDetails.leverage}x leverage
+            {positionDetails.status !== "lp" &&
+              `with ${positionDetails.leverage}x leverage`}
           </h2>
+
+          {currentAccount.pnl !== undefined &&
+            positionDetails.status !== "lp" && (
+              <p>
+                Total PnL{" "}
+                <span
+                  className={cn(
+                    "space-x-1",
+                    currentAccount.pnl > 0 ? "text-green-500" : "text-red-500",
+                  )}
+                >
+                  <span>
+                    {currentAccount.pnl > 0 && "+"}
+                    {formatUsd(currentAccount.pnl)}
+                  </span>
+                  <span className="text-xs">
+                    (
+                    {formatPercentage(
+                      currentAccount.pnl / positionDetails.positionSizeUsd,
+                    )}
+                    )
+                  </span>
+                </span>
+              </p>
+            )}
         </div>
       )}
       <div className="space-y-6">

@@ -12,7 +12,7 @@ import {
 } from "@mrgnlabs/marginfi-client-v2";
 import { BankMetadata } from "@mrgnlabs/mrgn-common";
 
-import { ArenaPool } from "@/lib/types";
+import { ArenaPool, PnlDataMap } from "@/lib/types";
 import { MARGINFI_PROGRAM_ID } from "@/lib/consts";
 
 export async function GET(request: Request) {
@@ -27,11 +27,14 @@ export async function GET(request: Request) {
   }
 
   try {
-    const arenaPoolsRes = await fetch(`http://202.8.10.73:3001/arena/pools`, {
-      headers: {
-        "x-api-key": process.env.MARGINFI_API_KEY!,
+    const arenaPoolsRes = await fetch(
+      `${process.env.MARGINFI_API_URL}/arena/pools`,
+      {
+        headers: {
+          "x-api-key": process.env.MARGINFI_API_KEY!,
+        },
       },
-    });
+    );
     const arenaPoolsData = (await arenaPoolsRes.json()) as {
       data: ArenaPool[];
     };
@@ -89,6 +92,16 @@ export async function GET(request: Request) {
         tokenSymbol: pool.quote_bank.mint.symbol,
       };
     }
+
+    const arenaPnlRes = await fetch(
+      `${process.env.MARGINFI_API_URL}/arena/pnl/${walletAddress}`,
+      {
+        headers: {
+          "x-api-key": process.env.MARGINFI_API_KEY!,
+        },
+      },
+    );
+    const arenaPnlData: PnlDataMap = (await arenaPnlRes.json()).data.pools;
 
     const connection = new Connection(process.env.RPC_URL!);
     const wallet = Keypair.fromSecretKey(
@@ -229,6 +242,9 @@ export async function GET(request: Request) {
 
           const portfolioBalanceUsd = totalAssetsUsd - totalLiabilitiesUsd;
 
+          const pnlData = arenaPnlData[groupAddress.toBase58()];
+          const pnl = pnlData ? pnlData.total_pnl_usd : undefined;
+
           return {
             address: account.address.toBase58(),
             pool,
@@ -238,6 +254,7 @@ export async function GET(request: Request) {
             totalLiabilitiesUsd,
             portfolioBalanceUsd,
             balances,
+            pnl,
           };
         }),
       )
