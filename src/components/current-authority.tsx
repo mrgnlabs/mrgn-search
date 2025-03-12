@@ -5,7 +5,7 @@ import Link from "next/link";
 import { IconExternalLink, IconTrophy } from "@tabler/icons-react";
 
 import { Account, PointsData } from "@/lib/types";
-import { formatNumber, formatUsd, shortAddress } from "@/lib/utils";
+import { cn, formatNumber, formatUsd, shortAddress } from "@/lib/utils";
 
 import {
   Select,
@@ -119,7 +119,12 @@ const CurrentAuthority = ({
           value={currentAccount?.address}
           onValueChange={(value) => handleAccountChange(value)}
         >
-          <SelectTrigger className="h-7 w-[200px] text-sm">
+          <SelectTrigger
+            className={cn(
+              "h-7 w-[160px] text-sm",
+              type === "arena" && "w-[240px]",
+            )}
+          >
             <SelectValue placeholder="Select an account" />
           </SelectTrigger>
           <SelectContent align="center">

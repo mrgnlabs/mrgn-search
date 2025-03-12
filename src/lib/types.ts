@@ -17,6 +17,7 @@ export type Account = {
   portfolioBalanceUsd: number;
   balances: Balance[];
   pool?: ArenaPool;
+  pnl?: number;
   totalPortfolioSizeUsd?: number;
 };
 
@@ -105,4 +106,21 @@ export type PositionDetails = {
   positionSizeUsd: number;
   positionSizeToken: number;
   leverage: number;
+};
+
+export type PnlData = {
+  realized_pnl: number;
+  unrealized_pnl: number;
+  total_pnl: number;
+  current_position: number;
+  mark_price: number;
+  quote_price_usd: number;
+  entry_prices: number[];
+  realized_pnl_usd: number;
+  unrealized_pnl_usd: number;
+  total_pnl_usd: number;
+};
+
+export type PnlDataMap = {
+  [key: string]: PnlData;
 };
