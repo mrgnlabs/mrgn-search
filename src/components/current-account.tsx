@@ -1,12 +1,13 @@
 import React from "react";
 import Link from "next/link";
 
-import { Account } from "@/lib/types";
+import { Account, PositionDetails } from "@/lib/types";
 import {
   formatPercentage,
   formatUsd,
   healthFactorColor,
   cn,
+  getPositionDetails,
 } from "@/lib/utils";
 
 import { AssetCard } from "@/components/asset-card";
@@ -22,50 +23,20 @@ const CurrentAccount = ({
 }: CurrentAccountProps) => {
   const poolName = `${currentAccount.pool?.base_bank.mint.symbol}/${currentAccount.pool?.quote_bank.mint.symbol}`;
 
-  const positionType = React.useMemo(() => {
-    const baseBalance = currentAccount.balances.find(
-      (balance) =>
-        balance.bankAddress === currentAccount.pool?.base_bank.address,
-    );
-
-    if (!baseBalance) return "none";
-    if (baseBalance.assets > 0) return "long";
-    if (baseBalance.liabilities > 0) return "short";
-    return "none";
-  }, [currentAccount.balances, currentAccount.pool?.base_bank.address]);
-
-  const leverage = React.useMemo(() => {
-    const baseBalance = currentAccount.balances.find(
-      (balance) =>
-        balance.bankAddress === currentAccount.pool?.base_bank.address,
-    );
-    const quoteBalance = currentAccount.balances.find(
-      (balance) =>
-        balance.bankAddress === currentAccount.pool?.quote_bank.address,
-    );
-
-    if (!baseBalance || !quoteBalance) return 0;
-
-    if (positionType === "long") {
-      return (
-        Math.round(
-          (baseBalance?.assetsUsd /
-            (baseBalance?.assetsUsd - quoteBalance?.liabilitiesUsd) +
-            Number.EPSILON) *
-            100,
-        ) / 100
-      );
-    } else if (positionType === "short") {
-      return (
-        Math.round(
-          (quoteBalance?.assetsUsd /
-            (quoteBalance?.assetsUsd - baseBalance?.liabilitiesUsd) +
-            Number.EPSILON) *
-            100,
-        ) / 100
-      );
-    }
-  }, [currentAccount, positionType]);
+  const positionDetails: PositionDetails = React.useMemo(() => {
+    if (!currentAccount.pool)
+      return {
+        status: "none",
+        totalUsdValue: 0,
+        positionSizeUsd: 0,
+        positionSizeToken: 0,
+        leverage: 0,
+      };
+    return getPositionDetails({
+      balances: currentAccount.balances,
+      pool: currentAccount.pool,
+    });
+  }, [currentAccount.balances, currentAccount.pool]);
 
   return (
     <div className="w-full space-y-4">
@@ -75,10 +46,12 @@ const CurrentAccount = ({
             <span
               className={cn(
                 "uppercase",
-                positionType === "long" ? "text-green-500" : "text-red-500",
+                positionDetails.status === "long"
+                  ? "text-green-500"
+                  : "text-red-500",
               )}
             >
-              {positionType}
+              {positionDetails.status}
             </span>{" "}
             <Link
               href={`/arena/pools?address=${currentAccount.pool?.group}`}
@@ -86,7 +59,7 @@ const CurrentAccount = ({
             >
               {poolName}
             </Link>{" "}
-            with {leverage}x leverage
+            with {positionDetails.leverage}x leverage
           </h2>
         </div>
       )}
@@ -131,7 +104,7 @@ const CurrentAccount = ({
               </p>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
-              <h3>Portfolio Balance: </h3>
+              <h3>{type === "arena" ? "Account" : "Portfolio"} Balance: </h3>
               <p className="text-foreground">
                 {formatUsd(currentAccount.portfolioBalanceUsd)}
               </p>
