@@ -129,6 +129,7 @@ export async function GET(request: Request) {
 
     const bankData: Bank = {
       address: bank.address.toBase58(),
+      tokenAddress: bankMetadata.tokenAddress,
       tokenSymbol: bankMetadata.tokenSymbol,
       totalAssetsUsd,
       totalLiabilitiesUsd,

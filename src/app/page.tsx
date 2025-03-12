@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function AccountsSearchPage() {
   return (
     <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 px-4 py-16">
-      <h1 className="text-3xl">Search marginfi accounts</h1>
+      <h1 className="text-4xl">Search marginfi accounts</h1>
       <SearchAccounts />
     </div>
   );

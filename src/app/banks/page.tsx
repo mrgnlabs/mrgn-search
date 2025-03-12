@@ -40,7 +40,7 @@ export default async function BanksSearchPage() {
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 pb-8 pt-16">
-      <h1 className="text-3xl">Search for marginfi banks</h1>
+      <h1 className="text-4xl">Search for marginfi banks</h1>
       <Suspense fallback={<Loader text="Loading banks..." />}>
         <SearchBanks banks={banks} stakedBanks={stakedBanks} />
       </Suspense>
