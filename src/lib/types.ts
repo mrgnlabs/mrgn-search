@@ -40,6 +40,13 @@ export type Bank = {
     oracleMaxAge: number;
     oracleSetup: string;
     utilization: number;
+    fees: {
+      insuranceFeeFixedApr: number;
+      insuranceIrFee: number;
+      protocolFixedFeeApr: number;
+      protocolIrFee: number;
+      protocolOriginationFee: number;
+    };
   };
 };
 

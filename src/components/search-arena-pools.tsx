@@ -214,7 +214,7 @@ const SearchArenaPools = ({ pools }: SearchArenaPoolsProps) => {
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-4 lg:grid-cols-2">
                 {poolDetails.banks.map((bank) => (
                   <div
                     className="space-y-8 rounded-lg bg-muted/50 p-4"
@@ -371,6 +371,38 @@ const SearchArenaPools = ({ pools }: SearchArenaPoolsProps) => {
                         </strong>
                         <div className="text-right">
                           {bank.config.operationalState}
+                        </div>
+                      </li>
+                      <li className="grid w-full grid-cols-2 items-center">
+                        <strong className="font-medium text-muted-foreground">
+                          Insurance IR Fee
+                        </strong>
+                        <div className="text-right">
+                          {bank.config.fees.insuranceIrFee}
+                        </div>
+                      </li>
+                      <li className="grid w-full grid-cols-2 items-center">
+                        <strong className="font-medium text-muted-foreground">
+                          Protocol Fixed Fee APR
+                        </strong>
+                        <div className="text-right">
+                          {bank.config.fees.protocolFixedFeeApr}
+                        </div>
+                      </li>
+                      <li className="grid w-full grid-cols-2 items-center">
+                        <strong className="font-medium text-muted-foreground">
+                          Protocol IR Fee
+                        </strong>
+                        <div className="text-right">
+                          {bank.config.fees.protocolIrFee}
+                        </div>
+                      </li>
+                      <li className="grid w-full grid-cols-2 items-center">
+                        <strong className="font-medium text-muted-foreground">
+                          Protocol Origination Fee
+                        </strong>
+                        <div className="text-right">
+                          {bank.config.fees.protocolOriginationFee}
                         </div>
                       </li>
                     </ul>
