@@ -14,11 +14,10 @@ export async function GET() {
     const arenaPoolsData = (await arenaPoolsRes.json()) as {
       data: ArenaPool[];
     };
-    console.log(arenaPoolsData);
     const arenaPools = arenaPoolsData.data.filter((pool) => pool.group);
 
     if (!arenaPoolsRes.ok || !arenaPools) {
-      return [];
+      return NextResponse.json({ banks: [] }, { status: 200 });
     }
 
     const banks = arenaPools.filter((pool) => pool.base_bank.mint.address);
