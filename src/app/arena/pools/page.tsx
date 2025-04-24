@@ -4,25 +4,42 @@ import { Suspense } from "react";
 import { SearchArenaPools } from "@/components/search-arena-pools";
 import { Loader } from "@/components/ui/loader";
 import { ArenaPool } from "@/lib/types";
+
 export const metadata: Metadata = {
   title: "Arena Search - Banks",
   description: "Search for arena banks",
 };
 
-async function getBanks() {
-  const arenaPoolsRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/search/arena/pools/all`,
-  );
-  const arenaPoolsData = await arenaPoolsRes.json();
-  const arenaPools: ArenaPool[] = arenaPoolsData.banks.filter(
-    (pool: ArenaPool) => pool.group,
-  );
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-  if (!arenaPoolsRes.ok || !arenaPools) {
+async function getBanks() {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const arenaPoolsRes = await fetch(`${baseUrl}/api/search/arena/pools/all`, {
+      next: { revalidate: 0 },
+    });
+
+    if (!arenaPoolsRes.ok) {
+      console.error("Failed to fetch banks:", arenaPoolsRes.statusText);
+      return [];
+    }
+
+    const arenaPoolsData = await arenaPoolsRes.json();
+
+    if (!arenaPoolsData.banks) {
+      return [];
+    }
+
+    const arenaPools: ArenaPool[] = arenaPoolsData.banks.filter(
+      (pool: ArenaPool) => pool.group,
+    );
+
+    return arenaPools.filter((pool) => pool.base_bank.mint.address);
+  } catch (error) {
+    console.error("Error fetching banks:", error);
     return [];
   }
-
-  return arenaPools.filter((pool) => pool.base_bank.mint.address);
 }
 
 export default async function BanksSearchPage() {
