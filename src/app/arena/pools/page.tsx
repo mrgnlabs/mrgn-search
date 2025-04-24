@@ -4,22 +4,19 @@ import { Suspense } from "react";
 import { SearchArenaPools } from "@/components/search-arena-pools";
 import { Loader } from "@/components/ui/loader";
 import { ArenaPool } from "@/lib/types";
-
 export const metadata: Metadata = {
   title: "Arena Search - Banks",
   description: "Search for arena banks",
 };
 
 async function getBanks() {
-  const arenaPoolsRes = await fetch(`http://202.8.10.73:3001/arena/pools`, {
-    headers: {
-      "x-api-key": process.env.MARGINFI_API_KEY!,
-    },
-  });
-  const arenaPoolsData = (await arenaPoolsRes.json()) as {
-    data: ArenaPool[];
-  };
-  const arenaPools = arenaPoolsData.data.filter((pool) => pool.group);
+  const arenaPoolsRes = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/search/arena/pools/all`,
+  );
+  const arenaPoolsData = await arenaPoolsRes.json();
+  const arenaPools: ArenaPool[] = arenaPoolsData.banks.filter(
+    (pool: ArenaPool) => pool.group,
+  );
 
   if (!arenaPoolsRes.ok || !arenaPools) {
     return [];
